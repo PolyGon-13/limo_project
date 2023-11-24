@@ -1,0 +1,2 @@
+limo_legend
+-DCATKIN_DEVEL_PREFIX=/home/agilex/limo_project/devel -DCMAKE_INSTALL_PREFIX=/home/agilex/limo_project/install -G Unix Makefiles
