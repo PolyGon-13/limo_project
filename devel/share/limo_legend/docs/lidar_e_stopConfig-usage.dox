@@ -1,0 +1,10 @@
+\subsubsection usage Usage
+\verbatim
+<node name="limo_application" pkg="limo_application" type="limo_application">
+  <param name="e_stop_min_angle_deg" type="int" value="-10" />
+  <param name="e_stop_max_angle_deg" type="int" value="10" />
+  <param name="e_stop_distance_meter" type="double" value="1.0" />
+  <param name="e_stop_count" type="int" value="5" />
+</node>
+\endverbatim
+

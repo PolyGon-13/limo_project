@@ -1,0 +1,11 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~yellow_h_low" : \b [int] H Channel Low threshold min: 0, default: 50, max: 255
+- \b "~yellow_h_high" : \b [int] H Channel High threshold min: 0, default: 50, max: 255
+- \b "~yellow_l_low" : \b [int] L ChannelLow threshold min: 0, default: 50, max: 255
+- \b "~yellow_l_high" : \b [int] L Channel High threshold min: 0, default: 50, max: 255
+- \b "~yellow_s_low" : \b [int] S Channel Low threshold min: 0, default: 50, max: 255
+- \b "~yellow_s_high" : \b [int] S Channel High threshold min: 0, default: 50, max: 255
+

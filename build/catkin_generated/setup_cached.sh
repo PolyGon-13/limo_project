@@ -7,7 +7,4 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/agilex/limo_project/devel:$CMAKE_PREFIX_PATH"
 export PWD='/home/agilex/limo_project/build'
-export ROSLISP_PACKAGE_DIRECTORIES="/home/agilex/limo_project/devel/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/agilex/limo_project/src:$ROS_PACKAGE_PATH"

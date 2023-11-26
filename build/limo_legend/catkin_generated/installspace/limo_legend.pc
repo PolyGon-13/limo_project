@@ -3,6 +3,6 @@ prefix=/home/agilex/limo_project/install
 Name: limo_legend
 Description: Description of limo_legend
 Version: 0.0.0
-Cflags: 
+Cflags: -I${prefix}/include
 Libs: -L${prefix}/lib 
 Requires: 

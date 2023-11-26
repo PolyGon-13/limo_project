@@ -1,0 +1,10 @@
+\subsubsection usage Usage
+\verbatim
+<node name="limo_application" pkg="limo_application" type="limo_application">
+  <param name="base_speed" type="double" value="1.0" />
+  <param name="reference_lane_x" type="int" value="80" />
+  <param name="lateral_gain" type="int" value="5" />
+  <param name="pedestrian_width_min" type="int" value="60" />
+</node>
+\endverbatim
+

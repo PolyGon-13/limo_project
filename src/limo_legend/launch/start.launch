@@ -1,0 +1,39 @@
+<launch>
+	<include file="$(find limo_bringup)/launch/limo_start.launch"/>
+
+	<include file="/home/agilex/limo_ws/src/ros_astra_camera/launch/dabai_u3.launch"/>
+	
+	<arg name="marker_size" default="5.5" />
+	<arg name="max_new_marker_error" default="0.08" />
+	<arg name="max_track_error" default="0.2" />
+	<arg name="cam_image_topic" default="/camera/rgb/image_raw" />
+	<arg name="cam_info_topic" default="/camera/rgb/camera_info" />
+	<arg name="output_frame" default="/camera_link" />
+
+	<node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen">
+		<param name="marker_size"           type="double" value="$(arg marker_size)" />
+		<param name="max_new_marker_error"  type="double" value="$(arg max_new_marker_error)" />
+		<param name="max_track_error"       type="double" value="$(arg max_track_error)" />
+		<param name="output_frame"          type="string" value="$(arg output_frame)" />
+
+		<remap from="camera_image"  to="$(arg cam_image_topic)" />
+		<remap from="camera_info"   to="$(arg cam_info_topic)" />
+	</node>
+	<node pkg="limo_marker" type="2.marker_stop_control.py" name="marker_stop_node" output="screen"></node>
+	
+	
+	<node pkg="limo_legend" type="ar_marker.py" name="ar_marker" output="screen"/>
+	<node pkg="limo_legend" type="control.py" name="control" output="screen">
+		<rosparam file="$(find limo_legend)/params/lane_detection/control.yaml" command="load" />
+		<param name="control_topic_name" value="/cmd_vel"/>
+	</node>
+	<node pkg="limo_legend" type="lane_detect.py" name="lane_detect" output="screen" respawn="true">
+		<rosparam file="$(find limo_legend)/params/lane_detection/lane_detection.yaml" command="load" />
+		<param name="image_topic_name" value="/camera/rgb/image_raw/compressed"/>
+		<param name="visualization" value="True"/>
+	</node>
+	<node pkg="limo_legend" type="lidar_stop.py" name="lidar_stop" output="screen">
+		<rosparam file="$(find limo_legend)/params/lane_detection/e_stop.yaml" command="load" />
+		<param name="lidar_topic_name" value="/scan"/>
+	</node>
+</launch>
