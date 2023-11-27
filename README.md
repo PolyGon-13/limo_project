@@ -1,6 +1,8 @@
 # 기초로봇공학실험 프로젝트
 ### WEGO Robotics의 젯슨나노 기반의 로봇 limo를 이용하여 운전면허 기능시험 보조 로봇을 만드는 프로젝트를 진행하였다. (Ubuntu 18.04, ROS1 Melodic)
 ---
+![화면 캡처 2023-11-27 163649](https://github.com/PolyGon-13/limo_project/assets/107293272/1aa50f86-bc82-4e6f-bbff-0e401558e8b3)
+
 limo가 수행해야 하는 동작의 큰 틀은 다음과 같다.
 1. 차선 인식 및 자율주행
 2. AR 마커 인식 및 해당 동작 수행
