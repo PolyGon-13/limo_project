@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import rospy
@@ -7,7 +7,6 @@ from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import Int32
 from dynamic_reconfigure.server import Server
 from limo_legend.cfg import image_processingConfig
-
 import cv2
 import numpy as np
 
