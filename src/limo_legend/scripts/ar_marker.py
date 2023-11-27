@@ -18,7 +18,7 @@ class ID_control:
         self.override_twist = False
         
         self.start_time = rospy.get_time()
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(5)
 
         self.flag = None
 

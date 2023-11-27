@@ -1,13 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-import rospy
+import rospy, roslaunch, os
 from std_msgs.msg import Int32, String, Bool
 from geometry_msgs.msg import Twist
 from object_msgs.msg import ObjectArray
 from limo_base.msg import LimoStatus
 from dynamic_reconfigure.server import Server
 from limo_legend.cfg import controlConfig
+from pathlib import Path
 import math
 
 class LimoController:
@@ -26,6 +27,17 @@ class LimoController:
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
         rospy.Timer(rospy.Duration(0.03), self.drive_callback)
         self.override_twist = False
+        self.receiveimage = False
+        self.launch = dict()
+
+    def roslaunch(self, filename):
+        if filename in self.launch:
+            return
+        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        roslaunch.configure_logging(uuid)
+        path = Path(os.path.abspath(__file__)).parent.parent.joinpath("launch/%s"%filename)
+        self.launch[filename] = roslaunch.parent.ROSLaunchParent(uuid, [str(path)])
+        self.launch[filename].start()
 
     def reconfigure_callback(self, _config, _level):
         self.BASE_SPEED = _config.base_speed
@@ -49,6 +61,7 @@ class LimoController:
                 rospy.loginfo("Mode Changed --> Differential Drive")
 
     def lane_x_callback(self, _data):
+        self.receiveimage = True
         if _data.data == -1:
             self.distance_to_ref = 0
         else:
@@ -92,7 +105,9 @@ class LimoController:
             
 def run():
     new_class = LimoController()
-    rospy.spin()
+    while not rospy.is_shutdown():
+        if new_class.receiveimage:
+            new_class.roslaunch("marker.launch")
 
 if __name__ == '__main__':
     try:
