@@ -16,7 +16,7 @@ AR 마커 동작을 세부적으로 나열해보면 다음과 같다.
 LiDAR를 이용한 세부적인 동작은 다음과 같다.
 - 횡단보도에서 보행자 장애물을 감지하여 정지
 ---
-## /limo_legend/scripts
+## /src/limo_legend/scripts
 ### control.py
 - 다른 코드들의 노드들을 서브스크라이브하여 로봇의 동작을 조정
 
