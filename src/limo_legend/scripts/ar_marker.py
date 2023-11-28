@@ -15,12 +15,11 @@ class ID_control:
         self.pub = rospy.Publisher("/kim/marker/cmd_vel", Twist, queue_size=10)
         self.pub1 = rospy.Publisher("/kim/marker/bool", Bool, queue_size = 10)
         self.drive_data = Twist()
+        self.flag = None
         self.override_twist = False
         
         self.start_time = rospy.get_time()
         self.rate = rospy.Rate(5)
-
-        self.flag = None
 
     def marker_CB(self, data):
         for marker in data.markers:
@@ -63,14 +62,15 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time      
-        if passed_time > 2.5:
+        if passed_time > 3.5:
             self.flag = None
-        elif passed_time > 2:
+        elif passed_time > 3.2:
             self.override_twist = False
         else:
-            self.override_twist = True
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 1.0 * direction
+            if passed_time > 1.8:
+                self.override_twist = True
+                self.drive_data.linear.x = 0.3
+                self.drive_data.angular.z = 1.5 * direction
 
             '''
     def park_sign(self):
