@@ -17,12 +17,18 @@ class ID_control:
         self.drive_data = Twist()
         self.flag = None
         self.override_twist = False
+        self.kim_distance=0
         
         self.start_time = rospy.get_time()
         self.rate = rospy.Rate(5)
 
     def marker_CB(self, data):
         for marker in data.markers:
+            kim_x = marker.pose.pose.position.x
+            kim_y = marker.pose.pose.position.y
+            kim_z = marker.pose.pose.position.z
+            self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5
+
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
@@ -34,9 +40,10 @@ class ID_control:
 
     def found_sign(self, _data):
         if self.flag == None:
-            self.start_time = rospy.get_time()
-            self.flag = _data
-            rospy.loginfo(self.flag)
+            if self.kim_distance < 0.75:
+                self.start_time = rospy.get_time()
+                self.flag = _data
+                rospy.loginfo(self.flag)
 
     def stop_sign(self):
         if self.flag != "stop":
@@ -62,15 +69,14 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time      
-        if passed_time > 3.5:
+        if passed_time > 2.5:
             self.flag = None
-        elif passed_time > 3.2:
+        elif passed_time > 1.8:
             self.override_twist = False
         else:
-            if passed_time > 1.8:
-                self.override_twist = True
-                self.drive_data.linear.x = 0.3
-                self.drive_data.angular.z = 1.5 * direction
+            self.override_twist = True
+            self.drive_data.linear.x = 0.3
+            self.drive_data.angular.z = 1.5 * direction
 
             '''
     def park_sign(self):
