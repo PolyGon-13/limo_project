@@ -17,10 +17,7 @@ class ID_control:
         self.drive_data = Twist()
         self.flag = None
         self.override_twist = False
-<<<<<<< HEAD
         self.collect = None
-=======
->>>>>>> 6e4ca71770885d59f2f634601f54b07863773853
         self.kim_distance=0
         
         self.start_time = rospy.get_time()
@@ -32,10 +29,7 @@ class ID_control:
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5
-<<<<<<< HEAD
             # print(self.kim_distance)
-=======
->>>>>>> 6e4ca71770885d59f2f634601f54b07863773853
 
             if marker.id == 0:
                 self.found_sign("stop")
@@ -48,7 +42,6 @@ class ID_control:
 
     def found_sign(self, _data):
         if self.flag == None:
-<<<<<<< HEAD
             self.collect = _data
             rospy.loginfo(f"collect {_data} marker")
             rospy.loginfo(self.kim_distance)
@@ -56,11 +49,10 @@ class ID_control:
             if self.kim_distance < 0.8085:
                 self.start_time = rospy.get_time()
                 self.flag = self.collect
-=======
+
             if self.kim_distance < 0.75:
                 self.start_time = rospy.get_time()
                 self.flag = _data
->>>>>>> 6e4ca71770885d59f2f634601f54b07863773853
                 rospy.loginfo(self.flag)
 
     def stop_sign(self):
@@ -87,7 +79,6 @@ class ID_control:
         else:
             return
 
-<<<<<<< HEAD
         passed_time = rospy.get_time() - self.start_time 
         if passed_time > 2:
             self.flag = None
@@ -98,7 +89,7 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 1.7 * direction
-=======
+
         passed_time = rospy.get_time() - self.start_time      
         if passed_time > 2.5:
             self.flag = None
@@ -107,8 +98,6 @@ class ID_control:
         else:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 1.5 * direction
->>>>>>> 6e4ca71770885d59f2f634601f54b07863773853
 
             '''
     def park_sign(self):
