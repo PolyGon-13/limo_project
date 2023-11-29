@@ -25,13 +25,8 @@ class LaneDetection:
     
     def colorDetect(self, _img=np.ndarray(shape=(480, 640))):
         hls = cv2.cvtColor(_img, cv2.COLOR_BGR2HLS)
-        #white_lower = np.array([0, 0, 200])
-        #white_upper = np.array([179, 64, 255])
         mask_yellow = cv2.inRange(hls, self.YELLOW_LANE_LOW_TH, self.YELLOW_LANE_HIGH_TH)
-        mask_white = cv2.inRange(hls, self.YELLOW_LANE_LOW_TH, self.YELLOW_LANE_HIGH_TH)
-        blend_mask = cv2.bitwise_or(mask_yellow,mask_white)
-        blend_color = cv2.bitwise_and(_img,_img, mask=blend_mask)
-        return blend_color
+        return mask_yellow
     
     def calcLaneDistance(self, _img=np.ndarray(shape=(480, 640))):
         try:
