@@ -4,12 +4,11 @@
 import rospy
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage, Image
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, Bool
 from dynamic_reconfigure.server import Server
 from limo_legend.cfg import image_processingConfig
 import cv2
 import numpy as np
-
 
 class LaneDetection:
     def __init__(self):
@@ -17,11 +16,13 @@ class LaneDetection:
         srv = Server(image_processingConfig, self.reconfigure_callback)
         self.cvbridge = CvBridge()
         rospy.Subscriber(rospy.get_param("~image_topic_name", "/camera/rgb/image_raw/compressed"), CompressedImage, self.image_topic_callback)
-        self.distance_pub = rospy.Publisher("/limo/lane_x", Int32, queue_size=5)
+        self.distance_pub1 = rospy.Publisher("/limo/lane_x", Int32, queue_size=5)
+        self.distance_pub2 = rospy.Publisher("/limo/lane_x2", Int32, queue_size=5)
+        self.lane_connect_pub = rospy.Publisher("/limo/lane_connect", Bool, queue_size=5)
         self.viz = rospy.get_param("~visualization", True)
     
     def imageCrop(self, _img=np.ndarray(shape=(480, 640))):
-        return _img[420:480, 0:320]
+        return _img[420:480, 0:320], _img[420:480, 320:640]
     
     def colorDetect(self, _img=np.ndarray(shape=(480, 640))):
         hls = cv2.cvtColor(_img, cv2.COLOR_BGR2HLS)
@@ -41,8 +42,8 @@ class LaneDetection:
     def visResult(self):
         cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
         cv2.imshow("lane_original", self.frame)
-        cv2.imshow("lane_cropped", self.cropped_image)
-        cv2.imshow("lane_thresholded", self.thresholded_image)
+        cv2.imshow("lane_thresholded_left", self.thresholded_image)
+        cv2.imshow("lane_thresholded_right", self.thresholded_image2)
         cv2.waitKey(1)
 
     def reconfigure_callback(self, config, level):
@@ -50,13 +51,20 @@ class LaneDetection:
         self.YELLOW_LANE_HIGH_TH = np.array([config.yellow_h_high, config.yellow_l_high, config.yellow_s_high])
         return config
 
+    def lane_connect(self, thresholded_image, thresholded_image2):
+        connected = np.sum(thresholded_image[:,319]) > 1 and np.sum(thresholded_image2[:,0]) > 1
+        self.lane_connect_pub.publish(connected)
+
     def image_topic_callback(self, img):
         self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")
-        self.cropped_image = self.imageCrop(self.frame)
+        self.cropped_image, self.cropped_image2 = self.imageCrop(self.frame)
         self.thresholded_image = self.colorDetect(self.cropped_image)
+        self.thresholded_image2 = self.colorDetect(self.cropped_image2)
         self.left_distance = self.calcLaneDistance(self.thresholded_image)
-        self.distance_pub.publish(self.left_distance)
-
+        self.right_distance = self.calcLaneDistance(self.thresholded_image2)
+        self.lane_connect(self.thresholded_image,self.thresholded_image2)
+        self.distance_pub1.publish(self.left_distance)
+        self.distance_pub2.publish(self.right_distance)
         if self.viz:
             self.visResult()
             

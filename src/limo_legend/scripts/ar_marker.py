@@ -44,7 +44,7 @@ class ID_control:
         if self.flag == None:
             self.collect = _data
             rospy.loginfo(f"collect {_data} marker")
-            rospy.loginfo(self.kim_distance)
+            #rospy.loginfo(self.kim_distance)
 
             if self.kim_distance < 0.8085:
                 self.start_time = rospy.get_time()
