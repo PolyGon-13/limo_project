@@ -683,12 +683,12 @@ limo_legend/CMakeFiles/dynamic_reconfigure_gencfg.dir/clean:
 limo_legend/CMakeFiles/limo_legend_gencfg.dir/all:
 	$(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/limo_legend_gencfg.dir/build.make limo_legend/CMakeFiles/limo_legend_gencfg.dir/depend
 	$(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/limo_legend_gencfg.dir/build.make limo_legend/CMakeFiles/limo_legend_gencfg.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/agilex/limo_project/build/CMakeFiles --progress-num=12,13,14,15 "Built target limo_legend_gencfg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/agilex/limo_project/build/CMakeFiles --progress-num=12,13 "Built target limo_legend_gencfg"
 .PHONY : limo_legend/CMakeFiles/limo_legend_gencfg.dir/all
 
 # Build rule for subdir invocation for target.
 limo_legend/CMakeFiles/limo_legend_gencfg.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/agilex/limo_project/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/agilex/limo_project/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/limo_legend_gencfg.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/agilex/limo_project/build/CMakeFiles 0
 .PHONY : limo_legend/CMakeFiles/limo_legend_gencfg.dir/rule

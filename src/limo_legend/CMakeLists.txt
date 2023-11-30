@@ -90,9 +90,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
 generate_dynamic_reconfigure_options(
   cfg/lane_detection/image_processing.cfg
-  cfg/lane_detection/lidar_e_stop.cfg
   cfg/lane_detection/control.cfg
-  cfg/lane_detection/crosswalk.cfg
 )
 
 ###################################
