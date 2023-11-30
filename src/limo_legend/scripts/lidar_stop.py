@@ -10,7 +10,7 @@ import math
 class LidarObjectDetector:
     def __init__(self):
         rospy.init_node('lidar_stop', anonymous=False)
-        self.warn_pub = rospy.Publisher("/limo/lidar_warning", String, queue_size=3)
+        self.warn_pub = rospy.Publisher("/limo/lidar_warn", String, queue_size=3)
         self.sub_ls = rospy.Subscriber(rospy.get_param("lidar_topic_name", "/scan"), LaserScan, self.lidar_callback)
         self.E_STOP_MIN_ANGLE_DEG = -10.0
         self.E_STOP_MAX_ANGLE_DEG = 10.0

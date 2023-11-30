@@ -12,8 +12,8 @@ class ID_control:
     def __init__(self):
         rospy.init_node("ar_marker")
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
-        self.pub = rospy.Publisher("/kim/marker/cmd_vel", Twist, queue_size=10)
-        self.pub1 = rospy.Publisher("/kim/marker/bool", Bool, queue_size = 10)
+        self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=10)
+        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size = 10)
         self.drive_data = Twist()
         self.flag = None
         self.override_twist = False

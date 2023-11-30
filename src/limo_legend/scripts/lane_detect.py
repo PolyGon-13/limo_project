@@ -16,8 +16,8 @@ class LaneDetection:
         srv = Server(image_processingConfig, self.reconfigure_callback)
         self.cvbridge = CvBridge()
         rospy.Subscriber(rospy.get_param("~image_topic_name", "/camera/rgb/image_raw/compressed"), CompressedImage, self.image_topic_callback)
-        self.distance_pub1 = rospy.Publisher("/limo/lane_x", Int32, queue_size=5)
-        self.distance_pub2 = rospy.Publisher("/limo/lane_x2", Int32, queue_size=5)
+        self.distance_pub1 = rospy.Publisher("/limo/lane_left", Int32, queue_size=5)
+        self.distance_pub2 = rospy.Publisher("/limo/lane_right", Int32, queue_size=5)
         self.lane_connect_pub = rospy.Publisher("/limo/lane_connect", Bool, queue_size=5)
         self.viz = rospy.get_param("~visualization", True)
     

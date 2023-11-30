@@ -21,12 +21,12 @@ class LimoController:
         self.limo_mode = "ackermann"
         srv = Server(controlConfig, self.reconfigure_callback)
         rospy.Subscriber("limo_status", LimoStatus, self.limo_status_callback)
-        rospy.Subscriber("/limo/lane_x", Int32, self.lane_left_callback)
-        rospy.Subscriber("/limo/lane_x2", Int32, self.lane_right_callback)
+        rospy.Subscriber("/limo/lane_left", Int32, self.lane_left_callback)
+        rospy.Subscriber("/limo/lane_right", Int32, self.lane_right_callback)
         rospy.Subscriber("/limo/lane_connect", Bool, self.lane_connect_callback)
         rospy.Subscriber("/limo/lidar_warning", String, self.lidar_warning_callback)
-        rospy.Subscriber("/kim/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
-        rospy.Subscriber("/kim/marker/bool", Bool, self.marker_bool_callback)
+        rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
+        rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
         rospy.Timer(rospy.Duration(0.03), self.drive_callback)
         self.override_twist = False
