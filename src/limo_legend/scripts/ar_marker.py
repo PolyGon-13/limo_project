@@ -44,15 +44,11 @@ class ID_control:
         if self.flag == None:
             self.collect = _data
             rospy.loginfo(f"collect {_data} marker")
-            #rospy.loginfo(self.kim_distance)
+            rospy.loginfo(self.kim_distance)
 
-            if self.kim_distance < 0.8085:
+            if self.kim_distance < 0.81:
                 self.start_time = rospy.get_time()
                 self.flag = self.collect
-
-            if self.kim_distance < 0.75:
-                self.start_time = rospy.get_time()
-                self.flag = _data
                 rospy.loginfo(self.flag)
 
     def stop_sign(self):
@@ -60,7 +56,7 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 1:
+        if passed_time > 2:
             self.flag = None
             rospy.loginfo("STOP Marker End")
         elif passed_time > 0.5:
@@ -80,24 +76,15 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time 
-        if passed_time > 2:
+        if passed_time > 2.3:
             self.flag = None
             rospy.loginfo("TURN Marker End")
-        elif passed_time > 1.4:
+        elif passed_time > 1.8:
             self.override_twist = False
         elif passed_time > 0.4:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 1.7 * direction
-
-        passed_time = rospy.get_time() - self.start_time      
-        if passed_time > 2.5:
-            self.flag = None
-        elif passed_time > 1.8:
-            self.override_twist = False
-        else:
-            self.override_twist = True
-            self.drive_data.linear.x = 0.3
 
             '''
     def park_sign(self):
@@ -112,7 +99,6 @@ class ID_control:
                 self.speed = -self.basic_speed
                 self.angle = self.basic_angle * pi / 180
                 '''
-
     def main(self):
         self.stop_sign()
         self.turn_sign()
