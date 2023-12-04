@@ -76,15 +76,16 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time 
-        if passed_time > 2.3:
+        if passed_time > 1.3:
             self.flag = None
             rospy.loginfo("TURN Marker End")
-        elif passed_time > 1.8:
+        elif passed_time > 1:
             self.override_twist = False
+
         elif passed_time > 0.4:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 1.7 * direction
+            self.drive_data.angular.z = 2.0 * direction
 
             '''
     def park_sign(self):

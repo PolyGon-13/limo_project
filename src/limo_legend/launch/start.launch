@@ -9,12 +9,11 @@
 		<param name="image_topic_name" value="/camera/rgb/image_raw/compressed"/>
 		<param name="visualization" value="True"/>
 	</node>
-	
+
 	<node pkg="limo_legend" type="control.py" name="control" output="screen">
 		<rosparam file="$(find limo_legend)/params/lane_detection/control.yaml" command="load" />
 		<param name="control_topic_name" value="/cmd_vel"/>
 	</node>
-	
+
 	<node pkg="limo_legend" type="lidar_stop.py" name="lidar_stop" output="log"/>
-	
 </launch>

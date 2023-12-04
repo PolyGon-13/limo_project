@@ -4,6 +4,7 @@
 import rospy, roslaunch, os
 from std_msgs.msg import Int32, String, Bool
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Imu
 from object_msgs.msg import ObjectArray
 from limo_base.msg import LimoStatus
 from dynamic_reconfigure.server import Server
@@ -24,9 +25,10 @@ class LimoController:
         rospy.Subscriber("/limo/lane_left", Int32, self.lane_left_callback)
         rospy.Subscriber("/limo/lane_right", Int32, self.lane_right_callback)
         rospy.Subscriber("/limo/lane_connect", Bool, self.lane_connect_callback)
-        rospy.Subscriber("/limo/lidar_warning", String, self.lidar_warning_callback)
+        rospy.Subscriber("/limo/lidar_warn", String, self.lidar_warning_callback)
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
+        rospy.Subscriber("/imu",Imu, self.imu_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
         rospy.Timer(rospy.Duration(0.03), self.drive_callback)
         self.override_twist = False
@@ -89,6 +91,21 @@ class LimoController:
 
     def lane_connect_callback(self, _data):
         self.lane_connected = _data.data
+
+    def imu_callback(self, msg):
+        x = msg.orientation.x
+        y = msg.orientation.y
+        z = msg.orientation.z
+        w = msg.orientation.w
+        roll = math.atan2(2 * (w * x + y * z), 1 - 2 * (x**2 + y**2))
+        pitch = math.asin(2 * (w * y - z * x))
+        yaw = math.atan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2))
+        roll_deg = math.degrees(roll)
+        pitch_deg = math.degrees(pitch)
+        yaw_deg = math.degrees(yaw)
+        print(roll_deg,end='  ')
+        print(pitch_deg,end='  ')
+        print(yaw_deg,end='\n')
 
     def drive_callback(self, _event):
         drive_data = Twist()
