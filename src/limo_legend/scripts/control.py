@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import rospy, roslaunch, os
-from std_msgs.msg import Int32, String, Bool
+from std_msgs.msg import Int32, String, Bool, Float64
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
 from object_msgs.msg import ObjectArray
@@ -20,22 +20,27 @@ class LimoController:
         self.distance_right = 0
         self.e_stop = "Safe"
         self.limo_mode = "ackermann"
+        self.last_time = rospy.get_time()
+        self.heavyside = False
+        self.override_twist = False
+        self.left_receiveimage = False
+        self.lane_connected = False
+        self.REF_X2 = 240
+        self.angular_y = 0
+        self.lidar_timer = 0.0
+        self.launch = dict()
         srv = Server(controlConfig, self.reconfigure_callback)
         rospy.Subscriber("limo_status", LimoStatus, self.limo_status_callback)
         rospy.Subscriber("/limo/lane_left", Int32, self.lane_left_callback)
         rospy.Subscriber("/limo/lane_right", Int32, self.lane_right_callback)
         rospy.Subscriber("/limo/lane_connect", Bool, self.lane_connect_callback)
         rospy.Subscriber("/limo/lidar_warn", String, self.lidar_warning_callback)
+        rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
         rospy.Subscriber("/imu",Imu, self.imu_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
         rospy.Timer(rospy.Duration(0.03), self.drive_callback)
-        self.override_twist = False
-        self.left_receiveimage = False
-        self.lane_connected = False
-        self.REF_X2 = 240
-        self.launch = dict()
 
     def roslaunch(self, filename):
         if filename in self.launch:
@@ -83,6 +88,9 @@ class LimoController:
     def lidar_warning_callback(self, _data):
         self.e_stop = _data.data
 
+    def lidar_timer_callback(self, _data):
+        self.lidar_timer = _data.data
+
     def marker_cmd_vel_callback(self, _data):
         self.new_drive_data = _data
 
@@ -93,19 +101,10 @@ class LimoController:
         self.lane_connected = _data.data
 
     def imu_callback(self, msg):
-        x = msg.orientation.x
-        y = msg.orientation.y
-        z = msg.orientation.z
-        w = msg.orientation.w
-        roll = math.atan2(2 * (w * x + y * z), 1 - 2 * (x**2 + y**2))
-        pitch = math.asin(2 * (w * y - z * x))
-        yaw = math.atan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2))
-        roll_deg = math.degrees(roll)
-        pitch_deg = math.degrees(pitch)
-        yaw_deg = math.degrees(yaw)
-        print(roll_deg,end='  ')
-        print(pitch_deg,end='  ')
-        print(yaw_deg,end='\n')
+        dt = rospy.get_time() - self.last_time 
+        self.last_time = rospy.get_time()
+        self.angular_y += msg.angular_velocity.y * dt
+        self.angular_y *= 1 - dt
 
     def drive_callback(self, _event):
         drive_data = Twist()
@@ -119,9 +118,20 @@ class LimoController:
         if self.lane_connected == True:
             drive_data.angular.z = self.distance_left * self.LATERAL_GAIN
 
+        if self.angular_y < -0.1:
+            self.heavyside = True
+        elif self.angular_y > 0.1:
+            self.heavyside = False
+
         try:
-            if self.e_stop == "Warning":
+            if self.lidar_timer < rospy.get_time():
                 drive_data.linear.x = 0.0
+                drive_data.angular.z = -3.14
+            elif self.e_stop == "Warning":
+                drive_data.linear.x = 0.0
+                drive_data.angular.z = 0.0
+            elif self.heavyside == True:
+                drive_data.linear.x = 0.2
                 drive_data.angular.z = 0.0
 
             if self.limo_mode == "diff":
