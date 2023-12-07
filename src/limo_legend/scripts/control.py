@@ -123,7 +123,7 @@ class LimoController:
         drive_data.angular.z = (self.distance_left + self.distance_right) * self.LATERAL_GAIN
         
         # 마커 감지 유무에 따른 마커 동작
-        if self.crosswalk_detected == True and self.e_stop != "":
+        if self.crosswalk_detected == True and self.e_stop != "Warning":
             if self.override_twist == True:
                 new_drive_data = Twist()
                 drive_data = self.new_drive_data
