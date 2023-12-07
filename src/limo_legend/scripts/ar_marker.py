@@ -43,13 +43,13 @@ class ID_control:
     def found_sign(self, _data):
         if self.flag == None:
             self.collect = _data
-            rospy.loginfo(f"collect {_data} marker")
-            rospy.loginfo(self.kim_distance)
+            # rospy.loginfo(f"collect {_data} marker")
+            # rospy.loginfo(self.kim_distance)
 
-            if self.kim_distance < 0.81:
+            if self.kim_distance < 1.0:
                 self.start_time = rospy.get_time()
                 self.flag = self.collect
-                rospy.loginfo(self.flag)
+                # rospy.loginfo(self.flag)
 
     def stop_sign(self):
         if self.flag != "stop":

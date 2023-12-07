@@ -3,9 +3,13 @@
 
 	<include file="/home/agilex/limo_ws/src/ros_astra_camera/launch/dabai_u3.launch"/>
 
-
 	<node pkg="limo_legend" type="lane_detect.py" name="lane_detect" output="log" respawn="true">
 		<rosparam file="$(find limo_legend)/params/lane_detection/lane_detection.yaml" command="load" />
+		<param name="image_topic_name" value="/camera/rgb/image_raw/compressed"/>
+		<param name="visualization" value="True"/>
+	</node>
+
+	<node pkg="limo_legend" type="crosswalk_detect.py" name="crosswalk_detect" output="screen">
 		<param name="image_topic_name" value="/camera/rgb/image_raw/compressed"/>
 		<param name="visualization" value="True"/>
 	</node>
@@ -16,4 +20,5 @@
 	</node>
 
 	<node pkg="limo_legend" type="lidar_stop.py" name="lidar_stop" output="log"/>
+	
 </launch>
