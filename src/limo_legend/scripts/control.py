@@ -131,10 +131,8 @@ class LimoController:
         # 마커 감지 유무에 따른 마커 동작
         if self.override_twist == True:
             if self.stop == True:
-                print("stop")
                 drive_data = self.new_drive_data
             elif self.crosswalk_detected == True and self.e_stop != "Warning":
-                print("turn")
                 drive_data = self.new_drive_data
 
         # 라인 겹침 처리

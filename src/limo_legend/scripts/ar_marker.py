@@ -91,7 +91,7 @@ class ID_control:
         elif passed_time > 0.4:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 2.0 * direction
+            self.drive_data.angular.z = 3.4 * direction
 
     def park_sign(self):
         if self.park_flag == False:
