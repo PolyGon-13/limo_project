@@ -10,14 +10,16 @@ import time
 
 class ID_control:
     def __init__(self):
-        rospy.init_node("ar_marker")
+        rospy.init_node("ar_marker2")
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=10)
-        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size = 10)
+        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=10)
+        self.pub2 = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
         self.drive_data = Twist()
         self.flag = None
         self.override_twist = False
         self.collect = None
+        self.stop = False
         self.kim_distance=0
         
         self.start_time = rospy.get_time()
@@ -46,7 +48,7 @@ class ID_control:
             # rospy.loginfo(f"collect {_data} marker")
             # rospy.loginfo(self.kim_distance)
 
-            if self.kim_distance < 1.0:
+            if self.kim_distance < 0.9:
                 self.start_time = rospy.get_time()
                 self.flag = self.collect
                 # rospy.loginfo(self.flag)
@@ -56,8 +58,12 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
+        self.stop = True
+        self.pub2.publish(self.stop)
+        print(self.stop)
         if passed_time > 2:
             self.flag = None
+            self.stop = False
             # rospy.loginfo("STOP Marker End")
         elif passed_time > 0.5:
             self.override_twist = False
@@ -87,7 +93,6 @@ class ID_control:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 2.0 * direction
 
-            '''
     def park_sign(self):
         if self.park_flag == False:
             self.park_flag = True
@@ -99,7 +104,7 @@ class ID_control:
             elif self.loop_time - self.park_time < 4:
                 self.speed = -self.basic_speed
                 self.angle = self.basic_angle * pi / 180
-                '''
+                
     def main(self):
         self.stop_sign()
         self.turn_sign()

@@ -23,6 +23,7 @@ class LimoController:
         self.last_time = rospy.get_time()
         self.heavyside = False
         self.override_twist = False
+        self.stop = False
         self.left_receiveimage = False
         self.lane_connected = False
         self.crosswalk_detected = False
@@ -39,6 +40,7 @@ class LimoController:
         rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
+        rospy.Subscriber("/limo/marker/stop", Bool, self.marker_stop_callback)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
         rospy.Subscriber("/imu",Imu, self.imu_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
@@ -106,6 +108,9 @@ class LimoController:
 
     def marker_bool_callback(self, _data):
         self.override_twist = _data.data
+        
+    def marker_stop_callback(self, _data):
+        self.stop = _data.data
 
     def lane_connect_callback(self, _data):
         self.lane_connected = _data.data
@@ -123,8 +128,13 @@ class LimoController:
         drive_data.angular.z = (self.distance_left + self.distance_right) * self.LATERAL_GAIN
         
         # 마커 감지 유무에 따른 마커 동작
-        if self.crosswalk_detected == True and self.e_stop != "Warning":
-            if self.override_twist == True:
+        if self.override_twist == True:
+            if self.stop == True:
+                print("stop")
+                new_drive_data = Twist()
+                drive_data = self.new_drive_data
+            elif self.crosswalk_detected == True and self.e_stop != "Warning":
+                print("turn")
                 new_drive_data = Twist()
                 drive_data = self.new_drive_data
 
