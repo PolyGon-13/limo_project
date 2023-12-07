@@ -123,6 +123,7 @@ class LimoController:
 
     def drive_callback(self, _event):
         drive_data = Twist()
+        new_drive_data = Twist()
         # 기본 동작
         drive_data.linear.x = self.BASE_SPEED
         drive_data.angular.z = (self.distance_left + self.distance_right) * self.LATERAL_GAIN
@@ -131,11 +132,9 @@ class LimoController:
         if self.override_twist == True:
             if self.stop == True:
                 print("stop")
-                new_drive_data = Twist()
                 drive_data = self.new_drive_data
             elif self.crosswalk_detected == True and self.e_stop != "Warning":
                 print("turn")
-                new_drive_data = Twist()
                 drive_data = self.new_drive_data
 
         # 라인 겹침 처리
@@ -143,9 +142,9 @@ class LimoController:
             drive_data.angular.z = self.distance_left * self.LATERAL_GAIN
 
         # IMU 센서 동작
-        if self.angular_y < -0.1:
+        if abs(self.angular_y) > 0.05:
             self.heavyside = True
-        elif self.angular_y > 0.1:
+        elif abs(self.angular_y) < 0.05:
             self.heavyside = False
         # print(self.lidar_timer, rospy.get_time())
 
