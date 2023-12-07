@@ -20,6 +20,7 @@ class LaneDetection:
         self.distance_pub1 = rospy.Publisher("/limo/lane_left", Int32, queue_size=5)
         self.distance_pub2 = rospy.Publisher("/limo/lane_right", Int32, queue_size=5)
         self.lane_connect_pub = rospy.Publisher("/limo/lane_connect", Bool, queue_size=5)
+        self.lane_accel_pub = rospy.Publisher("/limo/lane/accel", Bool, queue_size=5)
     
     def imageCrop(self, _img=np.ndarray(shape=(480, 640))):
         return _img[420:480, 0:320], _img[420:480, 320:640]
@@ -54,6 +55,10 @@ class LaneDetection:
     def lane_connect(self, thresholded_image, thresholded_image2):
         connected = np.sum(thresholded_image[:,319]) > 1 and np.sum(thresholded_image2[:,0]) > 1
         self.lane_connect_pub.publish(connected)
+
+    def lane_speed(self, thresholded_image, thresholded_image2):
+        accel = np.sum(thresholded_image[:,0]) > 1 and np.sum(thresholded_image2[:,-1]) > 1
+        self.lane_accel_pub.publish(accel)
 
     def image_topic_callback(self, img):
         self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")

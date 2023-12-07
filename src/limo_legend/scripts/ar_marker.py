@@ -12,16 +12,17 @@ class ID_control:
     def __init__(self):
         rospy.init_node("ar_marker2")
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
-        self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=10)
-        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=10)
+        self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
+        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.pub2 = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
+        self.pub3 = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
         self.drive_data = Twist()
         self.flag = None
         self.override_twist = False
         self.collect = None
         self.stop = False
-        self.kim_distance=0
-        
+        self.park_bool = False
+        self.kim_distance=0     
         self.start_time = rospy.get_time()
         self.rate = rospy.Rate(5)
 
@@ -60,7 +61,6 @@ class ID_control:
         passed_time = rospy.get_time() - self.start_time
         self.stop = True
         self.pub2.publish(self.stop)
-        print(self.stop)
         if passed_time > 2:
             self.flag = None
             self.stop = False
@@ -72,42 +72,60 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
 
-    def turn_sign(self):
-        direction = 0
-        if self.flag == "left":
-            direction = 1
-        elif self.flag == "right":
-            direction = -1
+    def right_turn_sign(self):
+        if self.flag == "right":
+            passed_time = rospy.get_time() - self.start_time
+            if passed_time > 2:
+                self.flag = None
+                # rospy.loginfo("TURN Marker End")
+            elif passed_time > 1.1:
+                self.override_twist = False
+            elif passed_time > 0.4:
+                self.override_twist = True
+                self.drive_data.linear.x = 0.3
+                self.drive_data.angular.z = -4.0
+                direction = 1
         else:
             return
 
-        passed_time = rospy.get_time() - self.start_time 
-        if passed_time > 1.3:
-            self.flag = None
-            # rospy.loginfo("TURN Marker End")
-        elif passed_time > 1:
-            self.override_twist = False
-
-        elif passed_time > 0.4:
-            self.override_twist = True
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 3.4 * direction
+    def left_turn_sign(self):
+        if self.flag == "left":
+            passed_time = rospy.get_time() - self.start_time 
+            if passed_time > 2:
+                self.flag = None
+                # rospy.loginfo("TURN Marker End")
+            elif passed_time > 1.6:
+                self.override_twist = False
+            elif passed_time > 0.2:
+                self.override_twist = True
+                self.drive_data.linear.x = 0.3
+                self.drive_data.angular.z = 4.0
+        else:
+            return
 
     def park_sign(self):
-        if self.park_flag == False:
-            self.park_flag = True
-            self.park_time = rospy.get_time()
+        if self.flag == "park":
+            passed_time = rospy.get_time() - self.start_time
+            self.park_bool = True
+            self.pub3.publish(self.park_bool)
+            if passed_time > 4:
+                self.flag = None
+            elif passed_time > 3.5:
+                self.override_twist = False
+            elif passed_time > 2:
+                self.speed = 0.3
+                self.angle = -0.3
+            elif passed_time > 1:
+                self.speed = -0.3
+                self.angle = 0.3
         else:
-            if self.loop_time - self.park_time < 2:
-                self.speed = self.basic_speed
-                self.angle = -self.basic_angle * pi / 180
-            elif self.loop_time - self.park_time < 4:
-                self.speed = -self.basic_speed
-                self.angle = self.basic_angle * pi / 180
-                
+            return
+    
     def main(self):
         self.stop_sign()
-        self.turn_sign()
+        self.right_turn_sign()
+        self.left_turn_sign()
+        self.park_sign()
         self.pub.publish(self.drive_data)
         self.pub1.publish(self.override_twist)
         self.rate.sleep()

@@ -24,6 +24,8 @@ class LimoController:
         self.heavyside = False
         self.override_twist = False
         self.stop = False
+        self.park = False
+        self.accel_bool = False
         self.left_receiveimage = False
         self.lane_connected = False
         self.crosswalk_detected = False
@@ -36,11 +38,13 @@ class LimoController:
         rospy.Subscriber("/limo/lane_left", Int32, self.lane_left_callback)
         rospy.Subscriber("/limo/lane_right", Int32, self.lane_right_callback)
         rospy.Subscriber("/limo/lane_connect", Bool, self.lane_connect_callback)
+        rospy.Subscriber("/limo/lane/accel", Bool, self.lane_accel_callback)
         rospy.Subscriber("/limo/lidar_warn", String, self.lidar_warning_callback)
         rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
         rospy.Subscriber("/limo/marker/stop", Bool, self.marker_stop_callback)
+        rospy.Subscriber("/limo/marker/park", Bool, self.marker_park_callback)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
         rospy.Subscriber("/imu",Imu, self.imu_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
@@ -112,11 +116,17 @@ class LimoController:
     def marker_stop_callback(self, _data):
         self.stop = _data.data
 
+    def marker_park_callback(self, _data):
+        self.park = _data.data
+
     def lane_connect_callback(self, _data):
         self.lane_connected = _data.data
 
+    def lane_accel_callback(self, _data):
+        self.accel_bool = _data.data
+
     def imu_callback(self, msg):
-        dt = rospy.get_time() - self.last_time 
+        dt = rospy.get_time() - self.last_time
         self.last_time = rospy.get_time()
         self.angular_y += msg.angular_velocity.y * dt
         self.angular_y *= 1 - dt
@@ -130,7 +140,9 @@ class LimoController:
         
         # 마커 감지 유무에 따른 마커 동작
         if self.override_twist == True:
-            if self.stop == True:
+            if self.park == True:
+                drive_data = self.new_drive_data
+            elif self.stop == True:
                 drive_data = self.new_drive_data
             elif self.crosswalk_detected == True and self.e_stop != "Warning":
                 drive_data = self.new_drive_data
@@ -138,6 +150,9 @@ class LimoController:
         # 라인 겹침 처리
         if self.lane_connected == True:
             drive_data.angular.z = self.distance_left * self.LATERAL_GAIN
+
+        if self.accel_bool == True:
+            drive_data.linear.x = self.BASE_SPEED * 2
 
         # IMU 센서 동작
         if abs(self.angular_y) > 0.05:
@@ -150,7 +165,7 @@ class LimoController:
             # 라이다 동작
             if self.lidar_timer < rospy.get_time():
                 drive_data.linear.x = 0.0
-                drive_data.angular.z = -1.57
+                drive_data.angular.z = -1.8
             elif self.e_stop == "Warning":
                 drive_data.linear.x = 0.0
                 drive_data.angular.z = 0.0
