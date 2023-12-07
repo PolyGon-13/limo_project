@@ -58,7 +58,7 @@ class ID_control:
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 2:
             self.flag = None
-            rospy.loginfo("STOP Marker End")
+            # rospy.loginfo("STOP Marker End")
         elif passed_time > 0.5:
             self.override_twist = False
         else:
@@ -78,7 +78,7 @@ class ID_control:
         passed_time = rospy.get_time() - self.start_time 
         if passed_time > 1.3:
             self.flag = None
-            rospy.loginfo("TURN Marker End")
+            # rospy.loginfo("TURN Marker End")
         elif passed_time > 1:
             self.override_twist = False
 

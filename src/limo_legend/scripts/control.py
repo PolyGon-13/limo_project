@@ -137,7 +137,7 @@ class LimoController:
             self.heavyside = True
         elif self.angular_y > 0.1:
             self.heavyside = False
-        print(self.lidar_timer, rospy.get_time())
+        # print(self.lidar_timer, rospy.get_time())
 
         try:
             # 라이다 동작
