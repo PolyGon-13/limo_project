@@ -113,11 +113,11 @@ class ID_control:
             elif passed_time > 3.5:
                 self.override_twist = False
             elif passed_time > 2:
-                self.speed = 0.3
-                self.angle = -0.3
+                self.drive_data.linear.x = 0.3
+                self.drive_data.angular.z = -0.3
             elif passed_time > 1:
-                self.speed = -0.3
-                self.angle = 0.3
+                self.drive_data.linear.x = -0.3
+                self.drive_data.angular.z = 0.3
         else:
             return
     
