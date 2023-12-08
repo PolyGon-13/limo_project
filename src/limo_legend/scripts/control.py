@@ -152,7 +152,7 @@ class LimoController:
             drive_data.angular.z = self.distance_left * self.LATERAL_GAIN
 
         if self.accel_bool == True:
-            drive_data.linear.x = self.BASE_SPEED * 2
+            drive_data.linear.x *= 2
 
         # IMU 센서 동작
         if abs(self.angular_y) > 0.05:
