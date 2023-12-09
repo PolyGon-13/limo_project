@@ -61,12 +61,13 @@ class ID_control:
             # rospy.loginfo(f"collect {_data} marker")
             # rospy.loginfo(self.kim_distance)
 
-            if self.crosswalk_detected == False and (_data == "park" or _data == "right"):
+            if self.crosswalk_detected == False and (_data in ("right", "park")):
                 return
-            if self.kim_distance < 0.9:
+            elif self.kim_distance < 0.8 and (_data in ("stop", "left")):
+                return
+            else:
                 self.start_time = rospy.get_time()
                 self.flag = self.collect
-                # rospy.loginfo(self.flag)
 
     def stop_sign(self):
         if self.flag != "stop":
