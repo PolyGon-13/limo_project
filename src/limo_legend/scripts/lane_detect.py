@@ -57,7 +57,7 @@ class LaneDetection:
         self.lane_connect_pub.publish(connected)
 
     def lane_speed(self, thresholded_image, thresholded_image2):
-        accel = np.sum(thresholded_image[:,0]) > 1 and np.sum(thresholded_image2[:,319]) > 1
+        accel = np.sum(thresholded_image[0,:]) > 1 and np.sum(thresholded_image2[0,:]) > 1
         self.lane_accel_pub.publish(accel)
 
     def image_topic_callback(self, img):

@@ -36,6 +36,7 @@ class ID_control:
         else:
             self.crosswalk_detected = True
             self.crosswalk_distance = _data.data
+            #print("find")
 
     def marker_CB(self, data):
         for marker in data.markers:
@@ -47,11 +48,11 @@ class ID_control:
 
             if marker.id == 0:
                 self.found_sign("stop")
-            elif marker.id == 3:
+            elif marker.id == 1:
                 self.found_sign("right")
             elif marker.id == 2:
                 self.found_sign("left")
-            elif marker.id == 1:
+            elif marker.id == 3:
                 self.found_sign("park")
 
     def found_sign(self, _data):
@@ -60,8 +61,8 @@ class ID_control:
             # rospy.loginfo(f"collect {_data} marker")
             # rospy.loginfo(self.kim_distance)
 
-            if self.crosswalk_detected == False and (_data == "park" or _data == "right"):
-                return
+            #if self.crosswalk_detected == False and (_data == "park" or _data == "right"):
+                #return
             if self.kim_distance < 0.9:
                 self.start_time = rospy.get_time()
                 self.flag = self.collect
@@ -122,14 +123,14 @@ class ID_control:
             self.park_bool = True
             self.pub3.publish(self.park_bool)
 
-            if passed_time > 12:
+            if passed_time > 3:
                 self.flag = None
-            elif passed_time > 9:
+            elif passed_time > 2.5:
                 self.override_twist = False
-            elif passed_time > 6:
+            elif passed_time > 2:
                 self.drive_data.linear.x = -0.3
                 self.drive_data.angular.z = 0.0
-            elif passed_time > 3:
+            elif passed_time > 1.5:
                 self.drive_data.linear.x = 0.3
                 self.drive_data.angular.z = 0.0
             elif passed_time > 0:

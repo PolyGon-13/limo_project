@@ -127,12 +127,14 @@ class LimoController:
         # 기본 동작
         drive_data.linear.x = self.BASE_SPEED
         drive_data.angular.z = (self.distance_left + self.distance_right) * self.LATERAL_GAIN
+        # print(drive_data.angular.z)
         
         # 마커 감지 유무에 따른 마커 동작
         if self.override_twist == True:
             if self.e_stop != "Warning":
                 drive_data = self.new_drive_data
         elif self.lane_connected == False and self.accel_bool == True:
+            if abs(drive_data.angular.z) < 0.3:
                 drive_data.linear.x *= 2
 
         # 라인 겹침 처리
