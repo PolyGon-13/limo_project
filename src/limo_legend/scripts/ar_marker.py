@@ -4,7 +4,7 @@
 import rospy
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Int32
 from math import *
 import time
 
@@ -12,6 +12,7 @@ class ID_control:
     def __init__(self):
         rospy.init_node("ar_marker2")
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
+        rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.pub2 = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
@@ -20,11 +21,21 @@ class ID_control:
         self.flag = None
         self.override_twist = False
         self.collect = None
+        self.crosswalk_detected = False
+        self.crosswalk_distance = 0
         self.stop = False
         self.park_bool = False
         self.kim_distance=0     
         self.start_time = rospy.get_time()
         self.rate = rospy.Rate(5)
+
+    def crosswalk_distance_callback(self, _data):
+        if _data.data == -1:
+            self.crosswalk_detected = False
+            self.crosswalk_distance = _data.data
+        else:
+            self.crosswalk_detected = True
+            self.crosswalk_distance = _data.data
 
     def marker_CB(self, data):
         for marker in data.markers:
@@ -36,11 +47,11 @@ class ID_control:
 
             if marker.id == 0:
                 self.found_sign("stop")
-            elif marker.id == 1:
+            elif marker.id == 3:
                 self.found_sign("right")
             elif marker.id == 2:
                 self.found_sign("left")
-            elif marker.id == 3:
+            elif marker.id == 1:
                 self.found_sign("park")
 
     def found_sign(self, _data):
@@ -49,6 +60,8 @@ class ID_control:
             # rospy.loginfo(f"collect {_data} marker")
             # rospy.loginfo(self.kim_distance)
 
+            if self.crosswalk_detected == False and (_data == "park" or _data == "right"):
+                return
             if self.kim_distance < 0.9:
                 self.start_time = rospy.get_time()
                 self.flag = self.collect
@@ -108,16 +121,21 @@ class ID_control:
             passed_time = rospy.get_time() - self.start_time
             self.park_bool = True
             self.pub3.publish(self.park_bool)
-            if passed_time > 4:
+
+            if passed_time > 12:
                 self.flag = None
-            elif passed_time > 3.5:
+            elif passed_time > 9:
                 self.override_twist = False
-            elif passed_time > 2:
-                self.drive_data.linear.x = 0.3
-                self.drive_data.angular.z = -0.3
-            elif passed_time > 1:
+            elif passed_time > 6:
                 self.drive_data.linear.x = -0.3
-                self.drive_data.angular.z = 0.3
+                self.drive_data.angular.z = 0.0
+            elif passed_time > 3:
+                self.drive_data.linear.x = 0.3
+                self.drive_data.angular.z = 0.0
+            elif passed_time > 0:
+                self.override_twist = True
+                self.drive_data.linear.x = 0.0
+                self.drive_data.angular.z = -1.0
         else:
             return
     

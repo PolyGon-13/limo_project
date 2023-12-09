@@ -57,7 +57,7 @@ class LaneDetection:
         self.lane_connect_pub.publish(connected)
 
     def lane_speed(self, thresholded_image, thresholded_image2):
-        accel = np.sum(thresholded_image[:,0]) > 1 and np.sum(thresholded_image2[:,-1]) > 1
+        accel = np.sum(thresholded_image[:,0]) > 1 and np.sum(thresholded_image2[:,319]) > 1
         self.lane_accel_pub.publish(accel)
 
     def image_topic_callback(self, img):
@@ -67,7 +67,8 @@ class LaneDetection:
         self.thresholded_image2 = self.colorDetect(self.cropped_image2)
         self.left_distance = self.calcLaneDistance(self.thresholded_image)
         self.right_distance = self.calcLaneDistance(self.thresholded_image2)
-        self.lane_connect(self.thresholded_image,self.thresholded_image2)
+        self.lane_connect(self.thresholded_image, self.thresholded_image2)
+        self.lane_speed(self.thresholded_image, self.thresholded_image2)
         self.distance_pub1.publish(self.left_distance)
         self.distance_pub2.publish(self.right_distance)
         
