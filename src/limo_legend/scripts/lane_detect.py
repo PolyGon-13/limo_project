@@ -4,7 +4,7 @@
 import rospy
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage, Image
-from std_msgs.msg import Int32, Bool
+from std_msgs.msg import Int32, Bool, Float32
 import cv2
 import numpy as np
 
@@ -20,10 +20,11 @@ class LaneDetection:
         self.distance_pub2 = rospy.Publisher("/limo/lane_right", Int32, queue_size=5)
         self.lane_connect_pub = rospy.Publisher("/limo/lane_connect", Bool, queue_size=5)
         self.lane_accel_pub = rospy.Publisher("/limo/lane/accel", Bool, queue_size=5)
+        self.gtan_pub = rospy.Publisher("/limo/lane/gtan", Float32, queue_size=5)
     
     # 이미지 자르기
     def imageCrop(self, _img=np.ndarray(shape=(480, 640))):
-        return _img[420:480, 0:320], _img[420:480, 320:640]
+        return _img[420:480, :]
     
     # 노란색 부분 추출
     def colorDetect(self, _img=np.ndarray(shape=(480, 640))):
@@ -51,6 +52,17 @@ class LaneDetection:
     def lane_speed(self, thresholded_image, thresholded_image2):
         accel = np.sum(thresholded_image[0,:]) > 1 and np.sum(thresholded_image2[0,:]) > 1
         self.lane_accel_pub.publish(accel)
+
+    def global_tan(self, _img):
+        if np.sum(_img) == 0:
+            return 0
+        x_range = np.arange(-320, 320)
+        y_range = np.arange(180, 240)
+        matrix_x = _img * x_range
+        matrix_y = (_img.T * y_range).T
+        matrix_atan = np.where(matrix_x, np.arctan(matrix_y / matrix_x), 0)
+        gtan = np.sum(matrix_atan) / np.sum(_img)
+        return gtan
     
     # 화면에 출력
     def visResult(self):
@@ -62,15 +74,18 @@ class LaneDetection:
 
     def image_topic_callback(self, img):
         self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")
-        self.cropped_image, self.cropped_image2 = self.imageCrop(self.frame)
-        self.thresholded_image = self.colorDetect(self.cropped_image)
-        self.thresholded_image2 = self.colorDetect(self.cropped_image2)
+        self.cropped_image = self.imageCrop(self.frame)
+        self.thresholded_image_original = self.colorDetect(self.cropped_image)
+        self.thresholded_image = self.thresholded_image_original[:, 0:320]
+        self.thresholded_image2 = self.thresholded_image_original[:, 320:640]
         self.left_distance = self.calcLaneDistance(self.thresholded_image)
         self.right_distance = self.calcLaneDistance(self.thresholded_image2)
         self.lane_connect(self.thresholded_image, self.thresholded_image2)
         self.lane_speed(self.thresholded_image, self.thresholded_image2)
+        self.lane_gtan = self.global_tan(self.thresholded_image_original)
         self.distance_pub1.publish(self.left_distance)
         self.distance_pub2.publish(self.right_distance)
+        self.gtan_pub.publish(self.lane_gtan)
         
         if self.viz:
             self.visResult()
