@@ -16,5 +16,5 @@
 		<remap from="camera_info"   to="$(arg cam_info_topic)" />
 	</node>
 
-	<node pkg="limo_legend" type="ar_marker.py" name="ar_marker2" output="screen"/>
+	<node pkg="limo_legend" type="ar_marker.py" name="aruco" output="screen"/>
 </launch>

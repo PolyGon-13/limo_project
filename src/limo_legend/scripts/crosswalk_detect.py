@@ -20,8 +20,8 @@ class CrossWalkDetector:
         self.CROSS_WALK_DETECT_TH = 20
         self.crosswalk_bool = False
         self.viz = rospy.get_param("~visualization", True)
-        self.distance_pub = rospy.Publisher("/limo/crosswalk/distance", Int32, queue_size=5)
         rospy.Subscriber(rospy.get_param("~image_topic_name", "/camera/rgb/image_raw/compressed"), CompressedImage, self.Image_CB)
+        self.distance_pub = rospy.Publisher("/limo/crosswalk/distance", Int32, queue_size=5)
 
     def imageCrop(self, _img=np.ndarray(shape=(480, 640))):
         self.crop_size_x = 360

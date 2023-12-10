@@ -22,14 +22,17 @@ class LaneDetection:
         self.lane_connect_pub = rospy.Publisher("/limo/lane_connect", Bool, queue_size=5)
         self.lane_accel_pub = rospy.Publisher("/limo/lane/accel", Bool, queue_size=5)
     
+    # 이미지 자르기
     def imageCrop(self, _img=np.ndarray(shape=(480, 640))):
         return _img[420:480, 0:320], _img[420:480, 320:640]
     
+    # 노란색 부분 추출
     def colorDetect(self, _img=np.ndarray(shape=(480, 640))):
         hls = cv2.cvtColor(_img, cv2.COLOR_BGR2HLS)
         mask_yellow = cv2.inRange(hls, self.YELLOW_LANE_LOW_TH, self.YELLOW_LANE_HIGH_TH)
         return mask_yellow
     
+    # 차선의 무게중심 계산
     def calcLaneDistance(self, _img=np.ndarray(shape=(480, 640))):
         try:
             M = cv2.moments(_img)
@@ -40,22 +43,26 @@ class LaneDetection:
             self.y = -1
         return self.x
     
+    # 화면에 출력
     def visResult(self):
         cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
         cv2.imshow("lane_original", self.frame)
         # cv2.imshow("lane_thresholded_left", self.thresholded_image)
         # cv2.imshow("lane_thresholded_right", self.thresholded_image2)
         cv2.waitKey(1)
-
+    
+    # 환경변수 설정
     def reconfigure_callback(self, config, level):
         self.YELLOW_LANE_LOW_TH = np.array([config.yellow_h_low, config.yellow_l_low, config.yellow_s_low]) 
         self.YELLOW_LANE_HIGH_TH = np.array([config.yellow_h_high, config.yellow_l_high, config.yellow_s_high])
         return config
 
+    # 왼쪽 차선이 오른쪽 threshold 이미지에 표시될 경우 처리
     def lane_connect(self, thresholded_image, thresholded_image2):
         connected = np.sum(thresholded_image[:,319]) > 1 and np.sum(thresholded_image2[:,0]) > 1
         self.lane_connect_pub.publish(connected)
 
+    # 두 차선이 인식될 경우 True를 반환 (가속 구간)
     def lane_speed(self, thresholded_image, thresholded_image2):
         accel = np.sum(thresholded_image[0,:]) > 1 and np.sum(thresholded_image2[0,:]) > 1
         self.lane_accel_pub.publish(accel)

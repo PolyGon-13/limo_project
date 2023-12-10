@@ -43,7 +43,6 @@ class LimoController:
         rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
-        rospy.Subscriber("/limo/marker/stop", Bool, self.marker_stop_callback)
         rospy.Subscriber("/limo/marker/park", Bool, self.marker_park_callback)
         rospy.Subscriber("/imu",Imu, self.imu_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
@@ -103,9 +102,6 @@ class LimoController:
 
     def marker_bool_callback(self, _data):
         self.override_twist = _data.data
-        
-    def marker_stop_callback(self, _data):
-        self.stop = _data.data
 
     def marker_park_callback(self, _data):
         self.park = _data.data
