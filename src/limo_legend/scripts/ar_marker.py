@@ -30,10 +30,9 @@ class ID_control:
             self.crosswalk_detected = False
             self.crosswalk_distance = _data.data # 횡단보도와의 거리 데이터가 필요할까?
         else: #횡단보도 인식
-            print("crosswalk_detect")
+            # print("crosswalk_detect")
             self.crosswalk_detected = True
             self.crosswalk_distance = _data.data
-            #print("find")
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
