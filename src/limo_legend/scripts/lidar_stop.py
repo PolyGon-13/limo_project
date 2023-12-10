@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-from std_msgs.msg import UInt8, String, Duration, Float64
+from std_msgs.msg import String, Duration, Float64
 from sensor_msgs.msg import LaserScan
 import math
 
@@ -17,7 +17,6 @@ class LidarObjectDetector:
         self.E_STOP_MAX_ANGLE_DEG = 10.0
         self.E_STOP_DISTANCE_METER = 0.3
         self.E_STOP_COUNT = 5
-        self.USE_LIFT = True
         self.Warning_Status = False
         self.timer = rospy.get_time() + 5
         self.Warning_first_time = rospy.Time.from_sec(0.0)

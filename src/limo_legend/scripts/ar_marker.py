@@ -5,7 +5,7 @@ import rospy
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Int32
-# from math import *
+#from math import *
 import time
 
 class ID_control:
@@ -60,8 +60,11 @@ class ID_control:
             # rospy.loginfo(f"collect {_data} marker")
             # rospy.loginfo(self.kim_distance)
 
-            if self.crosswalk_detected == False and (_data in ("right", "park")): # 횡단보도를 인식하지 못했는데 right나 park 신호가 왔을 경우
+            if self.crosswalk_detected == False and _data == "park": # 횡단보도를 인식하지 못했는데 right나 park 신호가 왔을 경우
                 return
+            elif self.crosswalk_detected == False and _data == "right":
+                if self.kim_distance > 0.9:
+                    return
             elif self.kim_distance > 0.8 and (_data in ("stop", "left")): # 마커와의 거리가 0.8보다 작은데 stop이나 left 신호가 왔을 경우
                 return
             else:
@@ -80,6 +83,7 @@ class ID_control:
         elif passed_time > 0.5:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
+            # print("stop_start")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
@@ -96,34 +100,37 @@ class ID_control:
         elif passed_time > 1.1:
             self.override_twist = False
         elif passed_time > 0.4:
+            # print("right_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -4.0 # 우회전은 값 괜찮은듯
 
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
-        if self.flag != "stop": # main함수에 의해 계속 실행되므로 left 신호가 아니면 패스
+        if self.flag != "left": # main함수에 의해 계속 실행되므로 left 신호가 아니면 패스
             return
 
         passed_time = rospy.get_time() - self.start_time 
         if passed_time > 2:
             self.flag = None
-            # rospy.loginfo("TURN Marker End")
+            # rospy.loginfo("LEFT Marker End")
         elif passed_time > 1.6:
             self.override_twist = False
         elif passed_time > 0.2:
+            # print("left_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 4.0 # 좌회전은 교차로 내라 추가적인 조건과 값 수정 필요
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
-        if self.flag != "stop": # main함수에 의해 계속 실행되므로 park 신호가 아니면 패스
+        if self.flag != "park": # main함수에 의해 계속 실행되므로 park 신호가 아니면 패스
             return
 
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 3:
             self.flag = None
+            # rospy.loginfo("PARK Marker End")
         elif passed_time > 2.5:
             self.override_twist = False
         elif passed_time > 2:
@@ -133,6 +140,7 @@ class ID_control:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
         elif passed_time > 0:
+            # print("park_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0 # 주차는 값 조정 필요

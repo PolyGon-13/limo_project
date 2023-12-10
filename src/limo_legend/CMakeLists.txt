@@ -10,7 +10,6 @@ project(limo_legend)
 find_package(catkin REQUIRED COMPONENTS
   std_msgs
   rospy
-  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -88,10 +87,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-generate_dynamic_reconfigure_options(
-  cfg/lane_detection/image_processing.cfg
-  cfg/lane_detection/control.cfg
-)
+## generate_dynamic_reconfigure_options(
+
+## )
 
 ###################################
 ## catkin specific configuration ##

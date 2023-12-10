@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(limo_legend_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/home/agilex/limo_project/devel/include " STREQUAL " ")
+if(NOT " " STREQUAL " ")
   set(limo_legend_INCLUDE_DIRS "")
-  set(_include_dirs "/home/agilex/limo_project/devel/include")
+  set(_include_dirs "")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -177,7 +177,7 @@ foreach(library ${libraries})
   endif()
 endforeach()
 
-set(limo_legend_EXPORTED_TARGETS "limo_legend_gencfg")
+set(limo_legend_EXPORTED_TARGETS "")
 # create dummy targets for exported code generation targets to make life of users easier
 foreach(t ${limo_legend_EXPORTED_TARGETS})
   if(NOT TARGET ${t})

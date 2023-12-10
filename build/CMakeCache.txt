@@ -386,7 +386,7 @@ gtest_hide_internal_symbols:BOOL=OFF
 gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
 
 //Path to a library.
-lib:FILEPATH=/opt/ros/melodic/lib/libdynamic_reconfigure_config_init_mutex.so
+lib:FILEPATH=/opt/ros/melodic/lib/librostime.so
 
 //Value Computed by CMake
 limo_legend_BINARY_DIR:STATIC=/home/agilex/limo_project/build/limo_legend

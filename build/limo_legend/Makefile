@@ -241,104 +241,6 @@ std_msgs_generate_messages_py/fast:
 	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/std_msgs_generate_messages_py.dir/build.make limo_legend/CMakeFiles/std_msgs_generate_messages_py.dir/build
 .PHONY : std_msgs_generate_messages_py/fast
 
-# Convenience name for target.
-limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule
-.PHONY : limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_cpp: limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule
-.PHONY : dynamic_reconfigure_generate_messages_cpp
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_cpp/fast:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/build.make limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_cpp/fast
-
-# Convenience name for target.
-limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule
-.PHONY : limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_eus: limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule
-.PHONY : dynamic_reconfigure_generate_messages_eus
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_eus/fast:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/build.make limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_eus/fast
-
-# Convenience name for target.
-limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule
-.PHONY : limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_lisp: limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule
-.PHONY : dynamic_reconfigure_generate_messages_lisp
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_lisp/fast:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/build.make limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_lisp/fast
-
-# Convenience name for target.
-limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule
-.PHONY : limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_nodejs: limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule
-.PHONY : dynamic_reconfigure_generate_messages_nodejs
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_nodejs/fast:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/build.make limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_nodejs/fast
-
-# Convenience name for target.
-limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule
-.PHONY : limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_py: limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule
-.PHONY : dynamic_reconfigure_generate_messages_py
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_py/fast:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/build.make limo_legend/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_py/fast
-
-# Convenience name for target.
-limo_legend/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule
-.PHONY : limo_legend/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_gencfg: limo_legend/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule
-.PHONY : dynamic_reconfigure_gencfg
-
-# fast build rule for target.
-dynamic_reconfigure_gencfg/fast:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/dynamic_reconfigure_gencfg.dir/build.make limo_legend/CMakeFiles/dynamic_reconfigure_gencfg.dir/build
-.PHONY : dynamic_reconfigure_gencfg/fast
-
-# Convenience name for target.
-limo_legend/CMakeFiles/limo_legend_gencfg.dir/rule:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 limo_legend/CMakeFiles/limo_legend_gencfg.dir/rule
-.PHONY : limo_legend/CMakeFiles/limo_legend_gencfg.dir/rule
-
-# Convenience name for target.
-limo_legend_gencfg: limo_legend/CMakeFiles/limo_legend_gencfg.dir/rule
-.PHONY : limo_legend_gencfg
-
-# fast build rule for target.
-limo_legend_gencfg/fast:
-	cd /home/agilex/limo_project/build && $(MAKE) $(MAKESILENT) -f limo_legend/CMakeFiles/limo_legend_gencfg.dir/build.make limo_legend/CMakeFiles/limo_legend_gencfg.dir/build
-.PHONY : limo_legend_gencfg/fast
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -352,13 +254,6 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... dynamic_reconfigure_gencfg"
-	@echo "... dynamic_reconfigure_generate_messages_cpp"
-	@echo "... dynamic_reconfigure_generate_messages_eus"
-	@echo "... dynamic_reconfigure_generate_messages_lisp"
-	@echo "... dynamic_reconfigure_generate_messages_nodejs"
-	@echo "... dynamic_reconfigure_generate_messages_py"
-	@echo "... limo_legend_gencfg"
 	@echo "... std_msgs_generate_messages_cpp"
 	@echo "... std_msgs_generate_messages_eus"
 	@echo "... std_msgs_generate_messages_lisp"

@@ -5,16 +5,15 @@ import rospy
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import Int32, Bool
-from dynamic_reconfigure.server import Server
-from limo_legend.cfg import image_processingConfig
 import cv2
 import numpy as np
 
 class LaneDetection:
     def __init__(self):
         rospy.init_node("lane_detect")
-        srv = Server(image_processingConfig, self.reconfigure_callback)
-        self.cvbridge = CvBridge()
+        self.YELLOW_LANE_LOW_TH = np.array([0, 90, 100]) # hls 색 영역의 최솟값 설정
+        self.YELLOW_LANE_HIGH_TH = np.array([60, 220, 255]) # hls 색 영역의 최댓값 설정
+        self.cvbridge = CvBridge() # 실시간 스트리밍
         self.viz = rospy.get_param("~visualization", True)
         rospy.Subscriber(rospy.get_param("~image_topic_name", "/camera/rgb/image_raw/compressed"), CompressedImage, self.image_topic_callback)
         self.distance_pub1 = rospy.Publisher("/limo/lane_left", Int32, queue_size=5)
@@ -42,20 +41,6 @@ class LaneDetection:
             self.x = -1
             self.y = -1
         return self.x
-    
-    # 화면에 출력
-    def visResult(self):
-        cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
-        cv2.imshow("lane_original", self.frame)
-        # cv2.imshow("lane_thresholded_left", self.thresholded_image)
-        # cv2.imshow("lane_thresholded_right", self.thresholded_image2)
-        cv2.waitKey(1)
-    
-    # 환경변수 설정
-    def reconfigure_callback(self, config, level):
-        self.YELLOW_LANE_LOW_TH = np.array([config.yellow_h_low, config.yellow_l_low, config.yellow_s_low]) 
-        self.YELLOW_LANE_HIGH_TH = np.array([config.yellow_h_high, config.yellow_l_high, config.yellow_s_high])
-        return config
 
     # 왼쪽 차선이 오른쪽 threshold 이미지에 표시될 경우 처리
     def lane_connect(self, thresholded_image, thresholded_image2):
@@ -66,6 +51,14 @@ class LaneDetection:
     def lane_speed(self, thresholded_image, thresholded_image2):
         accel = np.sum(thresholded_image[0,:]) > 1 and np.sum(thresholded_image2[0,:]) > 1
         self.lane_accel_pub.publish(accel)
+    
+    # 화면에 출력
+    def visResult(self):
+        cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
+        # cv2.imshow("lane_original", self.frame)
+        cv2.imshow("lane_thresholded_left", self.thresholded_image)
+        cv2.imshow("lane_thresholded_right", self.thresholded_image2)
+        cv2.waitKey(1)
 
     def image_topic_callback(self, img):
         self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")

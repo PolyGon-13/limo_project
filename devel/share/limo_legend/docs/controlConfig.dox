@@ -1,9 +1,0 @@
-\subsubsection parameters ROS parameters
-
-Reads and maintains the following parameters on the ROS server
-
-- \b "~base_speed" : \b [double] Base Control Speed min: 0.0, default: 1.0, max: 2.5
-- \b "~reference_lane_x" : \b [int] Reference Lane x position min: 0, default: 80, max: 640
-- \b "~lateral_gain" : \b [int] Gain for Turning min: 1, default: 5, max: 1000
-- \b "~pedestrian_width_min" : \b [int] Pedestrian Width Minimum min: 1, default: 60, max: 1000
-
