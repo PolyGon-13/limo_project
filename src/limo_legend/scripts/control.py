@@ -128,7 +128,7 @@ class LimoController:
                     drive_data = self.new_drive_data # 마커 동작을 수행
             elif self.lane_connected == False and self.accel_bool == True: # 마커를 인식했고, 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
                 if abs(drive_data.angular.z) < 0.3: # 계산된 각속도가 0.3보다 작은 경우(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
-                    drive_data.linear.x *= 2 # 기존 속도의 2배로 달림
+                    drive_data.linear.x *= 1.5 # 기존 속도의 1.5배로 달림
 
             # 라인 겹침 처리
             if self.lane_connected == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범한 경우

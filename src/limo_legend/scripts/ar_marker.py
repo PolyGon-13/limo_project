@@ -59,11 +59,8 @@ class ID_control:
             # rospy.loginfo(f"collect {_data} marker")
             # rospy.loginfo(self.kim_distance)
 
-            if self.crosswalk_detected == False and _data == "park": # 횡단보도를 인식하지 못했는데 right나 park 신호가 왔을 경우
+            if self.crosswalk_detected == False and (_data in ("park", "right")): # 횡단보도를 인식하지 못했는데 park나 right 신호가 왔을 경우
                 return
-            elif self.crosswalk_detected == False and _data == "right":
-                if self.kim_distance > 0.8:
-                    return
             elif self.kim_distance > 0.8 and (_data in ("stop", "left")): # 마커와의 거리가 0.8보다 작은데 stop이나 left 신호가 왔을 경우
                 return
             else:
@@ -76,10 +73,10 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
-        if passed_time > 2:
+        if passed_time > 1.5:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             # rospy.loginfo("STOP Marker End")
-        elif passed_time > 0.5:
+        elif passed_time > 0.7:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
             # print("stop_start")
@@ -92,17 +89,20 @@ class ID_control:
         if self.flag != "right": # main함수에 의해 계속 실행되므로 right 신호가 아니면 패스
             return
 
+        while(self.crosswalk_detected):
+            continue
+
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 2:
+        if passed_time > 3:
             self.flag = None
             # rospy.loginfo("RIGHT Marker End")
-        elif passed_time > 1.1:
+        elif passed_time > 2.3:
             self.override_twist = False
-        elif passed_time > 0.4:
+        elif passed_time > 0.7:
             # print("right_start")
             self.override_twist = True
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = -4.0 # 우회전은 값 괜찮은듯
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = -1.0 # 우회전은 값 괜찮은듯
 
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
