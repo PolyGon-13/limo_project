@@ -5,7 +5,6 @@ import rospy
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Int32
-#from math import *
 import time
 
 class ID_control:
@@ -31,6 +30,7 @@ class ID_control:
             self.crosswalk_detected = False
             self.crosswalk_distance = _data.data # 횡단보도와의 거리 데이터가 필요할까?
         else: #횡단보도 인식
+            print("crosswalk_detect")
             self.crosswalk_detected = True
             self.crosswalk_distance = _data.data
             #print("find")
@@ -63,7 +63,7 @@ class ID_control:
             if self.crosswalk_detected == False and _data == "park": # 횡단보도를 인식하지 못했는데 right나 park 신호가 왔을 경우
                 return
             elif self.crosswalk_detected == False and _data == "right":
-                if self.kim_distance > 0.9:
+                if self.kim_distance > 0.8:
                     return
             elif self.kim_distance > 0.8 and (_data in ("stop", "left")): # 마커와의 거리가 0.8보다 작은데 stop이나 left 신호가 왔을 경우
                 return
