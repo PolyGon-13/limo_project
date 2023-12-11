@@ -76,7 +76,7 @@ class LaneDetection:
     
     # 화면에 출력
     def visResult(self):
-        pass
+        pass # 화면 출력하면 카메라 딜레이 생겨서 실제 주행에서는 전부 패스
         # cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
         # cv2.imshow("lane_original", self.frame)
         # cv2.imshow("lane_thresholded_left", self.thresholded_image)
