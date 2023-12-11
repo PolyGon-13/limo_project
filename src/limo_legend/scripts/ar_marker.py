@@ -23,7 +23,7 @@ class ID_control:
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
-        self.park_bool_pub.Publisher("/limo/marker/park", Bool, queue_size=5)
+        self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
@@ -140,7 +140,7 @@ class ID_control:
         elif passed_time > 1.7:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-        else:
+        elif:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0 # 주차는 값 조정 필요
