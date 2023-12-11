@@ -55,7 +55,7 @@ class ID_control:
                 self.found_sign("right")
             elif marker.id == 2 and self.gtan < 0.5:
                 self.found_sign("left")
-            elif marker.id == 3 and self.gtan > -0.4:
+            elif marker.id == 3 and self.gtan > -0.5:
                 self.found_sign("park")
     
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
