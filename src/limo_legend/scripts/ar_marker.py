@@ -129,12 +129,12 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.8:
+        if passed_time > 3.8:
             self.flag = None
             self.override_twist = False
             self.park = False
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 3.8:
+        elif passed_time > 2.8:
             self.drive_data.linear.x = -0.3
             self.drive_data.angular.z = 0.0
         elif passed_time > 1.8:
