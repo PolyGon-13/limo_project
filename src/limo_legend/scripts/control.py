@@ -113,12 +113,12 @@ class LimoController:
     def marker_park_bool_callback(self, _data):
         self.park_bool = _data.data    
     
-    # imu 센서로부터 받아온 값들을 이용해 로봇의 기운 정도 계산
+    # imu 센서로부터 받아온 값들을 이용해 로봇의 기운 정도 계산 (합성곱 이용)
     def imu_callback(self, msg):
-        dt = rospy.get_time() - self.last_time
+        dt = rospy.get_time() - self.last_time 
         self.last_time = rospy.get_time()
-        self.angular_y += msg.angular_velocity.y * dt # 합성곱 이용
-        self.angular_y *= 1 - dt
+        self.angular_y += msg.angular_velocity.y * dt
+        self.angular_y *= 1 - dt # 지속적인 오차 누적을 피하기 위해 해당 값을 0으로 수렴시키 위한 값을 곱해줌
      
     # 각각의 코드와 메서드들에서 처리한 주행 데이터를 처리 및 퍼블리시
     def drive_callback(self, _event):
