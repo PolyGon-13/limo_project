@@ -32,12 +32,13 @@ class ID_control:
     def crosswalk_distance_callback(self, _data):
         if _data.data == -1: # 횡단보도 인식X
             self.crosswalk_detected = False
-            self.crosswalk_distance = _data.data
+            self.crosswalk_distance = _data.data # 횡단보도와의 거리 데이터를 받아옴 (활용할 방법이 있을까?)
         else: #횡단보도 인식
             # print("crosswalk_detect")
             self.crosswalk_detected = True
             self.crosswalk_distance = _data.data
 
+    # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
         # print(self.gtan)
@@ -59,7 +60,7 @@ class ID_control:
                 self.found_sign("left")
             elif marker.id == 3 and self.gtan > -0.5:
                 self.found_sign("park")
-                self.park = True
+                self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
                 self.park_bool_pub.publish(self.park)
     
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
@@ -130,26 +131,26 @@ class ID_control:
 
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 3.8:
-            self.flag = None
-            self.override_twist = False
-            self.park = False
+            self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
+            self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
+            self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 5:
+        elif passed_time > 5: # 후진하여 교차로 진입 구간 쯤으로 돌아감
             self.drive_data.linear.x = -0.3
             self.drive_data.angular.z = 0.0
-        elif passed_time > 3.8:
+        elif passed_time > 3.8: # 주차구간에 들어오기 전 상태로 다시 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
-        elif passed_time > 2.8:
+        elif passed_time > 2.8: # 직진한만큼 후진
             self.drive_data.linear.x = -0.3
             self.drive_data.angular.z = 0.0
-        elif passed_time > 1.8:
+        elif passed_time > 1.8: # 주차구간 쪽으로 직진
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-        elif passed_time > 0.3:
+        elif passed_time > 0.3: # 적절한 위치에서 멈춘 후 주차구간 쪽으로 제자리 회전
             self.override_twist = True
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0 # 주차는 값 조정 필요
+            self.drive_data.angular.z = -1.0
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self):
