@@ -55,7 +55,7 @@ class ID_control:
                 self.found_sign("right")
             elif marker.id == 2 and self.gtan < 0.5:
                 self.found_sign("left")
-            elif marker.id == 3:
+            elif marker.id == 3 and self.gtan > -0.4:
                 self.found_sign("park")
     
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
@@ -125,18 +125,18 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3:
+        print(passed_time)
+        if passed_time > 3.5:
             self.flag = None
             self.override_twist = False
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 2:
+        elif passed_time > 3:
             self.drive_data.linear.x = -0.3
             self.drive_data.angular.z = 0.0
-        elif passed_time > 1.5:
+        elif passed_time > 2.5:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-        elif passed_time > 0:
-            # print("park_start")
+        elif passed_time > 1:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0 # 주차는 값 조정 필요
