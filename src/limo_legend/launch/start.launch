@@ -3,7 +3,7 @@
 
 	<include file="/home/agilex/limo_ws/src/ros_astra_camera/launch/dabai_u3.launch"/>
 
-	<node pkg="limo_legend" type="lane_detect.py" name="lane_detect" output="log" respawn="true">
+	<node pkg="limo_legend" type="lane_detect.py" name="lane_detect" output="screen" respawn="true">
 		<param name="image_topic_name" value="/camera/rgb/image_raw/compressed"/>
 		<param name="visualization" value="True"/>
 	</node>

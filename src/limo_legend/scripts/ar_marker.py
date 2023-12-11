@@ -4,17 +4,13 @@
 import rospy
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Bool, Int32, Float32
+from std_msgs.msg import Bool, Int32, Float64
 import time
 
 class ID_control:
     def __init__(self):
         rospy.init_node("aruco")
-        rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
-        rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
-        rospy.Subscriber("/limo/lane/gtan", Float32, self.global_gtan)
-        self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
-        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
+
         self.drive_data = Twist() # 주행 데이터를 담을 drive_data를 Twist 메시지로 선언
         self.override_twist = False # aruco marker를 인식했는지 여부를 저장
         self.kim_distance=0  # 수학적으로 계산 마커와의 거리를 저장
@@ -23,12 +19,18 @@ class ID_control:
         self.crosswalk_detected = False # crosswalk_detect.py로부터 받아오는 횡단보도 인식여부
         self.crosswalk_distance = 0 # crosswalk_detect.py로부터 받아오는 횡단보도와의 거리       
         self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
+        self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
+        self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
+        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
+        rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
+        rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
+        rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
     
     # 횡단보도 인식여부 및 횡단보도와의 거리 서브스크라이브
     def crosswalk_distance_callback(self, _data):
         if _data.data == -1: # 횡단보도 인식X
             self.crosswalk_detected = False
-            self.crosswalk_distance = _data.data # 횡단보도와의 거리 데이터가 필요할까?
+            self.crosswalk_distance = _data.data
         else: #횡단보도 인식
             # print("crosswalk_detect")
             self.crosswalk_detected = True
@@ -36,6 +38,7 @@ class ID_control:
 
     def global_gtan(self, _data):
         self.gtan = _data.data
+        # print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -72,10 +75,10 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
-        if passed_time > 1.5:
+        if passed_time > 1.2:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             # rospy.loginfo("STOP Marker End")
-        elif passed_time > 0.7:
+        elif passed_time > 0.5:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
             # print("stop_start")
@@ -89,7 +92,7 @@ class ID_control:
             return
         
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4:
+        if passed_time > 4.2:
             self.flag = None
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
@@ -105,15 +108,16 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time 
-        if passed_time > 4.8:
+        if passed_time > 5:
             self.flag = None
-            self.override_twist = False
-            # rospy.loginfo("LEFT Marker End")            
-        elif passed_time > 3.3:
+            # rospy.loginfo("LEFT Marker End")
+        elif passed_time > 4.5:
+            self.override_twist = False               
+        elif passed_time > 3.5:
             # print("left_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = 1.0
+            self.drive_data.angular.z = 2.0
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
@@ -124,7 +128,7 @@ class ID_control:
         if passed_time > 3:
             self.flag = None
             self.override_twist = False
-            # rospy.loginfo("PARK Marker End")          
+            # rospy.loginfo("PARK Marker End")
         elif passed_time > 2:
             self.drive_data.linear.x = -0.3
             self.drive_data.angular.z = 0.0
