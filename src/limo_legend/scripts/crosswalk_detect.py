@@ -71,12 +71,13 @@ class CrossWalkDetector:
             return -1
 
     def visResult(self):
-        if not self.x <= 0 and not self.y <= 0:
-            cv2.line(self.cropped_image, (0, self.y), (self.crop_size_x, self.y), (0, 255, 255), 20)
+        pass
+        # if not self.x <= 0 and not self.y <= 0:
+            # cv2.line(self.cropped_image, (0, self.y), (self.crop_size_x, self.y), (0, 255, 255), 20)
         # cv2.imshow("crosswalk_cropped", self.cropped_image)
         # cv2.imshow("crosswalk_thresholded", self.thresholded_image)
         # cv2.imshow("crosswalk_edge", self.edge_image)
-        cv2.waitKey(1)
+        # cv2.waitKey(1)
 
     def Image_CB(self, img):
         self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")
