@@ -140,7 +140,7 @@ class ID_control:
         elif passed_time > 1.7:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-        else:
+        elif passed_time > 0.2
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0 # 주차는 값 조정 필요
