@@ -84,16 +84,16 @@ class LaneDetection:
         # cv2.waitKey(1)
 
     def image_topic_callback(self, img):
-        self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")
-        self.cropped_image = self.imageCrop(self.frame)
-        self.thresholded_image_original = self.colorDetect(self.cropped_image)
-        self.thresholded_image = self.thresholded_image_original[:, 0:320] # 흑백처리된 가로로 자른 이미지를 세로로 자르기 (왼쪽 차선 카메라)
-        self.thresholded_image2 = self.thresholded_image_original[:, 320:640] # 흑백처리된 가로로 자른 이미지를 세로로 자르기 (오른쪽 차선 카메라)
-        self.left_distance = self.calcLaneDistance(self.thresholded_image)
-        self.right_distance = self.calcLaneDistance(self.thresholded_image2)
-        self.lane_connect(self.thresholded_image, self.thresholded_image2)
-        self.lane_speed(self.thresholded_image, self.thresholded_image2)
-        self.lane_gtan = self.global_tan(self.thresholded_image_original)
+        self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8") # 카메라로부터 받아오는 원본 데이터 저장
+        self.cropped_image = self.imageCrop(self.frame) # 가로로 자른 이미지 저장
+        self.thresholded_image_original = self.colorDetect(self.cropped_image) # 노란색 부분을 검출한 이미지 저장
+        self.thresholded_image = self.thresholded_image_original[:, 0:320] # 전처리된 가로로 자른 이미지를 세로로 자르기 (왼쪽 차선 카메라)
+        self.thresholded_image2 = self.thresholded_image_original[:, 320:640] # 전처리된 가로로 자른 이미지를 세로로 자르기 (오른쪽 차선 카메라)
+        self.left_distance = self.calcLaneDistance(self.thresholded_image) # 왼쪽 차선용 카메라 데이터에서 차선의 무게중심 계산
+        self.right_distance = self.calcLaneDistance(self.thresholded_image2) # 오른쪽 차선용 카메라 데이터에서 차선의 무게중심 계산
+        self.lane_connect(self.thresholded_image, self.thresholded_image2) # 왼쪽 차선이 오른쪽 차선용 카메라에 침범하는지 여부를 계산
+        self.lane_speed(self.thresholded_image, self.thresholded_image2) # 양쪽 차선이 모두 감지되는 여부를 통해 가속 구간 여부를 판단
+        self.lane_gtan = self.global_tan(self.thresholded_image_original) # 차선의 치우침 정도 계산 (차선의 기울기)
         self.distance_pub1.publish(self.left_distance)
         self.distance_pub2.publish(self.right_distance)
         self.gtan_pub.publish(self.lane_gtan)
