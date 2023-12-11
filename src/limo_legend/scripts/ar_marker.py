@@ -126,17 +126,17 @@ class ID_control:
 
         passed_time = rospy.get_time() - self.start_time
         print(passed_time)
-        if passed_time > 3.8:
+        if passed_time > 3.4:
             self.flag = None
             self.override_twist = False
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 3:
+        elif passed_time > 2.6:
             self.drive_data.linear.x = -0.3
             self.drive_data.angular.z = 0.0
-        elif passed_time > 2.2:
+        elif passed_time > 1.8:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-        elif passed_time > 0.7:
+        elif passed_time > 0.3:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0 # 주차는 값 조정 필요
