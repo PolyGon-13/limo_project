@@ -38,6 +38,7 @@ class LimoController:
         rospy.Subscriber("/limo/lane/accel", Bool, self.lane_accel_callback)
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
+        rospy.Subscriber("/limo/marker/park", Bool, self.marker_park_bool_callback)
         rospy.Subscriber("/limo/lidar_warn", String, self.lidar_warning_callback)
         rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
@@ -90,6 +91,9 @@ class LimoController:
     # lane_detect.py로부터 받아온 두 차선을 인식했는지 여부를 변수에 저장
     def lane_accel_callback(self, _data):
         self.accel_bool = _data.data
+
+    def marker_park_bool_callback(self, _data):
+        self.park_bool = _data.data
             
     # lidar_stop.py로부터 받아온 라이다의 장애물 인식 여부 정보 변수에 저장
     def lidar_warning_callback(self, _data):
@@ -127,7 +131,7 @@ class LimoController:
                 if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우
                     drive_data = self.new_drive_data # 마커 동작을 수행
             elif self.lane_connected == False and self.accel_bool == True: # 마커를 인식했고, 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
-                if abs(drive_data.angular.z) < 0.3: # 계산된 각속도가 0.3보다 작은 경우(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
+                if abs(drive_data.angular.z) < 0.3 and self.park_bool = False: # 계산된 각속도가 0.3보다 작은 경우(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
                     drive_data.linear.x *= 1.3 # 기존 속도의 1.3배로 달림
 
             # 라인 겹침 처리
