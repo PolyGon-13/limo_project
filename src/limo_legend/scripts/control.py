@@ -45,6 +45,7 @@ class LimoController:
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
         rospy.Timer(rospy.Duration(0.03), self.drive_callback) # 0.03초마다 self.drive_callback 메서드 실행
 
+    # 코드 내에서 launch 파일을 실행시키기 위해 필요한 메서드
     def roslaunch(self, filename):
         if filename in self.launch:
             return
@@ -172,7 +173,7 @@ class LimoController:
 def run():
     new_class = LimoController()
     while not rospy.is_shutdown():
-        if new_class.left_receiveimage:
+        if new_class.left_receiveimage: # 카메라에서 이미지를 받아온 후 aruco_maker 관련 노드를 실행 (카메라 충돌 방지)
             new_class.roslaunch("marker.launch")
 
 if __name__ == '__main__':
