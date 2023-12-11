@@ -27,6 +27,7 @@ class LimoController:
         self.accel_bool = False # lane_detect.py로부터 받아옴. 두 차선을 감지(가속 구간) 신호를 받으면 True로 전환
         self.lane_connected = False # lane_detect.py로부터 받아옴. 왼쪽 차선 정보가 2번째 카메라(오른쪽 차선)로 넘어가는 시점에 True로 전환
         self.override_twist = False # ar_marker.py로부터 받아옴. 마커 감지 유무를 저장
+        self.park_bool = False
         self.e_stop = "Safe" # lidar_stop.py로부터 받아오는 라이다 감지 결과 저장
         self.lidar_timer = 0.0 # lidar_stop.py로부터 받아오는 라이다가 장애물을 감지한 시점부터 흐른 시간 정보
         self.launch = dict()
