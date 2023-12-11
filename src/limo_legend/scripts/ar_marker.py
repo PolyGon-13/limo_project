@@ -38,7 +38,7 @@ class ID_control:
 
     def global_gtan(self, _data):
         self.gtan = _data.data
-        # print(self.gtan)
+        print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -125,7 +125,6 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        print(passed_time)
         if passed_time > 3.4:
             self.flag = None
             self.override_twist = False
