@@ -15,6 +15,7 @@ class ID_control:
         self.override_twist = False # aruco marker를 인식했는지 여부를 저장
         self.kim_distance=0  # 수학적으로 계산 마커와의 거리를 저장
         self.flag = None # id값에 해당하는 문자열을 저장
+        self.park = False
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.crosswalk_detected = False # crosswalk_detect.py로부터 받아오는 횡단보도 인식여부
         self.crosswalk_distance = 0 # crosswalk_detect.py로부터 받아오는 횡단보도와의 거리       
@@ -22,6 +23,7 @@ class ID_control:
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
+        self.park_bool_pub.Publisher("/limo/marker/park", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
@@ -57,6 +59,8 @@ class ID_control:
                 self.found_sign("left")
             elif marker.id == 3 and self.gtan > -0.5:
                 self.found_sign("park")
+                self.park = True
+                self.park_bool_pub.publish(self.park)
     
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
     def found_sign(self, _data):
@@ -128,6 +132,7 @@ class ID_control:
         if passed_time > 3.7:
             self.flag = None
             self.override_twist = False
+            self.park = False
             # rospy.loginfo("PARK Marker End")
         elif passed_time > 2.7:
             self.drive_data.linear.x = -0.3
