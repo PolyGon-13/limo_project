@@ -78,10 +78,10 @@ class LaneDetection:
     def visResult(self):
         pass # 화면 출력하면 카메라 딜레이 생겨서 실제 주행에서는 전부 패스
         # cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
-        # cv2.imshow("lane_original", self.frame)
+        cv2.imshow("lane_original", self.frame)
         # cv2.imshow("lane_thresholded_left", self.thresholded_image)
         # cv2.imshow("lane_thresholded_right", self.thresholded_image2)
-        # cv2.waitKey(1)
+        cv2.waitKey(1)
 
     def image_topic_callback(self, img):
         self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8") # 카메라로부터 받아오는 원본 데이터 저장
