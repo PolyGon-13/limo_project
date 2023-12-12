@@ -57,6 +57,7 @@ class LimoController:
     
     # 리모 모드 설정
     # 내 마음대로 모드 전환이 되는 것 같은데 이를 활용할 수는 없을까?
+    # 초록색일 때 diff 모드로 바꿔야지
     def limo_status_callback(self, _data):
         if _data.motion_mode == 1:
             if self.limo_mode == "ackermann":
