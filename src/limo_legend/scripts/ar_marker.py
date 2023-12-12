@@ -62,7 +62,6 @@ class ID_control:
             elif marker.id == 3:
                 self.found_sign("park")
                 self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
-                self.park_bool_pub.publish(self.park)
     
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
     def found_sign(self, _data):
@@ -143,7 +142,7 @@ class ID_control:
         else: # 적절한 위치에서 우회전
             self.override_twist = True
             self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = -1.0
+            self.drive_data.angular.z = -1.2
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self):
@@ -153,6 +152,7 @@ class ID_control:
         self.left_turn_sign() # 좌회전 신호를 4순위로 실행
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
+        self.park_bool_pub.publish(self.park)
         self.rate.sleep() # 무한루프에서 설정한 주기를 맞추기 위해 기다리는 함수
 
 if __name__ == "__main__":
