@@ -55,10 +55,16 @@ class ID_control:
 
             if marker.id == 0:
                 self.found_sign("stop")
-            elif marker.id == 1 and self.gtan > -0.5:
-                self.found_sign("right")
-            elif marker.id == 2 and self.gtan < 0.5:
-                self.found_sign("left")
+            elif marker.id == 1:
+                if self.gtan > -0.5:
+                    self.found_sign("right")
+                else:
+                    self.found_sign("right2")
+            elif marker.id == 2:
+                if self.gtan < 0.5:
+                    self.found_sign("left")
+                else:
+                    self.found_sign("left2")
             elif marker.id == 3:
                 self.found_sign("park")
                 self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
@@ -125,6 +131,24 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
 
+    def left2_turn_sign(self):
+        if self.flag != "left2":
+            return
+        passed_time = rospy.get_time() - self.start_time
+        if passed_time > 3.7:
+            self.flag = None
+            self.override_twist = False         
+        elif passed_time > 2.3:
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = 0.1
+        elif passed_time > 1.5:
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = 0.0
+        elif passed_time > 0.5:
+            self.override_twist = True
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = 0.0
+
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
         if self.flag != "park": # main함수에 의해 계속 실행되므로 park 신호가 아니면 패스
@@ -153,6 +177,7 @@ class ID_control:
         self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
         self.left_turn_sign() # 좌회전 신호를 4순위로 실행
+        self.left2_turn_sign()
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
         self.park_bool_pub.publish(self.park)
