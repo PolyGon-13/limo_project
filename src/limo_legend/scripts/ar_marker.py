@@ -24,7 +24,6 @@ class ID_control:
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
-        self.left_bool_pub = rospy.Publisher("/limo/marker/left", Bool, queue_size=5)
         self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
@@ -60,8 +59,6 @@ class ID_control:
                 self.found_sign("right")
             elif marker.id == 2 and self.gtan < 0.5:
                 self.found_sign("left")
-                self.left = True
-                self.left_bool_pub.publish(self.left)
             elif marker.id == 3:
                 self.found_sign("park")
                 self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
