@@ -56,8 +56,6 @@ class LimoController:
         self.launch[filename].start()
     
     # 리모 모드 설정
-    # 내 마음대로 모드 전환이 되는 것 같은데 이를 활용할 수는 없을까?
-    # 초록색일 때 diff 모드로 바꿔야지
     def limo_status_callback(self, _data):
         if _data.motion_mode == 1:
             if self.limo_mode == "ackermann":
@@ -127,7 +125,7 @@ class LimoController:
         drive_data = Twist() # drive_data를 Twist 메시지 형태로 선언
         # 기본 동작
         drive_data.linear.x = self.BASE_SPEED
-        drive_data.angular.z = (self.distance_left + self.distance_right) * self.LATERAL_GAIN
+        drive_data.angular.z = (self.distance_left + self.distance_right) * self.LATERAL_GAIN # 왼쪽 차선과 오른쪽 차선과의 거리를 이용한 각속도 계산
 
         try:
             # 라인 겹침 처리
@@ -136,9 +134,9 @@ class LimoController:
 
             # 마커 감지 유무에 따른 마커 동작
             if self.override_twist == True: # 마커를 인식한 경우
-                # if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우
+                # if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
                 drive_data = self.new_drive_data # 마커 동작을 수행
-            elif self.lane_connected == False and self.accel_bool == True: # 마커를 인식했고, 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
+            elif self.lane_connected == False and self.accel_bool == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
                 if abs(drive_data.angular.z) < 0.3 and self.park_bool == False:
                     # 계산된 각속도가 0.3보다 작거나(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
                     # 또는 주차 마커를 인식한 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
@@ -154,7 +152,7 @@ class LimoController:
             if self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
                 # print("lidar_stop")
                 drive_data.linear.x = 0.0
-                drive_data.angular.z = -2.0
+                drive_data.angular.z = -2.0 # 제자리 회전할 각속도
             elif self.e_stop == "Warning": # 라이다가 장애물을 감지한 경우
                 drive_data.linear.x = 0.0
                 drive_data.angular.z = 0.0
