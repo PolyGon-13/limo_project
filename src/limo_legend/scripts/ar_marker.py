@@ -51,7 +51,7 @@ class ID_control:
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
-            # print(self.kim_distance)
+            print(self.kim_distance)
 
             if marker.id == 0:
                 self.found_sign("stop")
@@ -137,10 +137,10 @@ class ID_control:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 1.7: # 제자리에서 왼쪽으로 제자리 회전
+        elif passed_time > 3: # 제자리에서 왼쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
-        elif passed_time > 0.3: # 적절한 위치에서 우회전
+        else: # 적절한 위치에서 우회전
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
