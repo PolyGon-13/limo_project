@@ -16,6 +16,7 @@ class LaneDetection:
         self.cvbridge = CvBridge() # 실시간 스트리밍
         self.viz = rospy.get_param("~visualization", True)
         rospy.Subscriber(rospy.get_param("~image_topic_name", "/camera/rgb/image_raw/compressed"), CompressedImage, self.image_topic_callback)
+        rospy.Subscriber("/limo/marker/left", Bool, self.left_bool_callback)
         self.distance_pub1 = rospy.Publisher("/limo/lane_left", Int32, queue_size=5)
         self.distance_pub2 = rospy.Publisher("/limo/lane_right", Int32, queue_size=5)
         self.lane_connect_pub = rospy.Publisher("/limo/lane_connect", Bool, queue_size=5)
@@ -72,28 +73,31 @@ class LaneDetection:
         matrix_atan = np.where(x_not_zero, np.arctan(matrix_y / matrix_x), 0) # matrix_x가 참이면 arctan 연산결과를, 거짓이면 0을 반환
         # 각 픽셀에서 y축 값과 x축 값의 비율 (픽셀의 기울기)를 계산하고 arctan를 이용해 탄젠트 값(기울기)을 각도(라디안 단위)로 변환
         gtan = np.sum(matrix_atan) / np.sum(_img) # 차선의 평균 기울기 계산 (이미지 전체에서 감지된 차선의 기울기 / 이미지 내에서 차선으로 감지된 픽셀의 총 수)
-        return gtan 
+        return gtan
+
+    def left_bool_callback(self, _data):
+        self.left = _data.data
     
     # 화면에 출력
     def visResult(self):
-        pass # 화면 출력하면 카메라 딜레이 생겨서 실제 주행에서는 전부 패스
+        pass
         # cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
-        cv2.imshow("lane_original", self.frame)
+        # cv2.imshow("lane_original", self.frame)
         # cv2.imshow("lane_thresholded_left", self.thresholded_image)
         # cv2.imshow("lane_thresholded_right", self.thresholded_image2)
-        cv2.waitKey(1)
+        # cv2.waitKey(1)
 
     def image_topic_callback(self, img):
-        self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8") # 카메라로부터 받아오는 원본 데이터 저장
-        self.cropped_image = self.imageCrop(self.frame) # 가로로 자른 이미지 저장
-        self.thresholded_image_original = self.colorDetect(self.cropped_image) # 노란색 부분을 검출한 이미지 저장
-        self.thresholded_image = self.thresholded_image_original[:, 0:320] # 전처리된 가로로 자른 이미지를 세로로 자르기 (왼쪽 차선 카메라)
-        self.thresholded_image2 = self.thresholded_image_original[:, 320:640] # 전처리된 가로로 자른 이미지를 세로로 자르기 (오른쪽 차선 카메라)
-        self.left_distance = self.calcLaneDistance(self.thresholded_image) # 왼쪽 차선용 카메라 데이터에서 차선의 무게중심 계산
-        self.right_distance = self.calcLaneDistance(self.thresholded_image2) # 오른쪽 차선용 카메라 데이터에서 차선의 무게중심 계산
-        self.lane_connect(self.thresholded_image, self.thresholded_image2) # 왼쪽 차선이 오른쪽 차선용 카메라에 침범하는지 여부를 계산
-        self.lane_speed(self.thresholded_image, self.thresholded_image2) # 양쪽 차선이 모두 감지되는 여부를 통해 가속 구간 여부를 판단
-        self.lane_gtan = self.global_tan(self.thresholded_image_original) # 차선의 치우침 정도 계산 (차선의 기울기)
+        self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")
+        self.cropped_image = self.imageCrop(self.frame)
+        self.thresholded_image_original = self.colorDetect(self.cropped_image)
+        self.thresholded_image = self.thresholded_image_original[:, 0:320] # 흑백처리된 가로로 자른 이미지를 세로로 자르기 (왼쪽 차선 카메라)
+        self.thresholded_image2 = self.thresholded_image_original[:, 320:640] # 흑백처리된 가로로 자른 이미지를 세로로 자르기 (오른쪽 차선 카메라)
+        self.left_distance = self.calcLaneDistance(self.thresholded_image)
+        self.right_distance = self.calcLaneDistance(self.thresholded_image2)
+        self.lane_connect(self.thresholded_image, self.thresholded_image2)
+        self.lane_speed(self.thresholded_image, self.thresholded_image2)
+        self.lane_gtan = self.global_tan(self.thresholded_image_original)
         self.distance_pub1.publish(self.left_distance)
         self.distance_pub2.publish(self.right_distance)
         self.gtan_pub.publish(self.lane_gtan)
@@ -102,8 +106,9 @@ class LaneDetection:
             self.visResult()
             
 def run():
-    new_class = LaneDetection()
-    rospy.spin()
+    if !(self.left):
+        new_class = LaneDetection()
+        rospy.spin()
 
 if __name__ == '__main__':
     try:
