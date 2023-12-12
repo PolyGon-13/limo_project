@@ -21,14 +21,17 @@ LiDAR를 이용한 세부적인 동작은 다음과 같다.
 - 차단기가 내려갈시 이를 감지하여 정지
 ---
 ## /src/limo_legend/scripts
+### ar_marker.py
+- AR 마커를 인식한 결과와 그에 따른 동작을 퍼블리시
+  
 ### control.py
 - 다른 코드들의 노드들을 서브스크라이브하여 로봇의 동작을 조정
 
+### crosswalk_detect.py
+- 횡단보도를 인식하였을 경우 인식여부와 떨어진 거리를 퍼블리시
+
 ### lane_detect.py
 - 노란색 차선을 인식한 결과를 퍼블리시
-
-### ar_marker.py
-- AR 마커를 인식한 결과와 그에 따른 동작을 퍼블리시
 
 ### lidar_stop.py
 - LiDAR를 이용해 장애물을 인식했는지 여부를 퍼블리시
