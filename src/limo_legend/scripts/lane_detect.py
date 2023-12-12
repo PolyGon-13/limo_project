@@ -106,7 +106,7 @@ class LaneDetection:
             self.visResult()
             
 def run():
-    if !(self.left):
+    if not self.left:
         new_class = LaneDetection()
         rospy.spin()
 
