@@ -17,7 +17,6 @@ class LaneDetection:
         self.left = False
         self.viz = rospy.get_param("~visualization", True)
         rospy.Subscriber(rospy.get_param("~image_topic_name", "/camera/rgb/image_raw/compressed"), CompressedImage, self.image_topic_callback)
-        rospy.Subscriber("/limo/marker/left", Bool, self.left_bool_callback)
         self.distance_pub1 = rospy.Publisher("/limo/lane_left", Int32, queue_size=5)
         self.distance_pub2 = rospy.Publisher("/limo/lane_right", Int32, queue_size=5)
         self.lane_connect_pub = rospy.Publisher("/limo/lane_connect", Bool, queue_size=5)
@@ -75,9 +74,6 @@ class LaneDetection:
         # 각 픽셀에서 y축 값과 x축 값의 비율 (픽셀의 기울기)를 계산하고 arctan를 이용해 탄젠트 값(기울기)을 각도(라디안 단위)로 변환
         gtan = np.sum(matrix_atan) / np.sum(_img) # 차선의 평균 기울기 계산 (이미지 전체에서 감지된 차선의 기울기 / 이미지 내에서 차선으로 감지된 픽셀의 총 수)
         return gtan
-
-    def left_bool_callback(self, _data):
-        self.left = _data.data
     
     # 화면에 출력
     def visResult(self):
@@ -106,10 +102,9 @@ class LaneDetection:
         if self.viz:
             self.visResult()
             
-def run(LaneDetection):
-    if self.left == False:
-        new_class = LaneDetection()
-        rospy.spin()
+def run():
+    new_class = LaneDetection()
+    rospy.spin()
 
 if __name__ == '__main__':
     try:
