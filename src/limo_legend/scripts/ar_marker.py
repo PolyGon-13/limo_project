@@ -119,11 +119,11 @@ class ID_control:
             # rospy.loginfo("LEFT Marker End")
         elif passed_time > 5:
             self.override_twist = False         
-        elif passed_time > 3:
+        elif passed_time > 3.5:
             # print("left_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = 2.0
+            self.drive_data.angular.z = 1.0
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
