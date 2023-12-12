@@ -66,9 +66,9 @@ class ID_control:
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
     def found_sign(self, _data):
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
-            # if self.crosswalk_detected == False and _data == "park": # 횡단보도를 인식하지 못했는데 park 신호가 왔을 경우
-                # return
-            if self.kim_distance > 0.8 and _data == "stop": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
+            if self.kim_distance > 0.7 and _data == "park": # 횡단보도를 인식하지 못했는데 park 신호가 왔을 경우
+                return
+            elif self.kim_distance > 0.8 and _data == "stop": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
                 return
             else:
                 self.start_time = rospy.get_time()
@@ -130,12 +130,12 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 2.8:
+        if passed_time > 3.5:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 1: # 제자리에서 왼쪽으로 제자리 회전
+        elif passed_time > 1.7: # 제자리에서 왼쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
         elif passed_time > 0.3: # 적절한 위치에서 우회전
