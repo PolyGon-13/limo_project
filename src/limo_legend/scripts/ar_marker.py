@@ -102,7 +102,7 @@ class ID_control:
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
         elif passed_time > 2.5:
-            # print("right_start")
+            print("right_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0        
