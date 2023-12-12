@@ -15,8 +15,7 @@ class ID_control:
         self.override_twist = False # aruco marker를 인식했는지 여부를 저장
         self.kim_distance=0  # 수학적으로 계산 마커와의 거리를 저장
         self.flag = None # id값에 해당하는 문자열을 저장
-        self.left = False
-        self.park = False
+        self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.crosswalk_detected = False # crosswalk_detect.py로부터 받아오는 횡단보도 인식여부
         self.crosswalk_distance = 0 # crosswalk_detect.py로부터 받아오는 횡단보도와의 거리       
@@ -106,7 +105,6 @@ class ID_control:
         if passed_time > 4.2:
             self.flag = None
             self.override_twist = False
-            self.left = False
             # rospy.loginfo("RIGHT Marker End")
         elif passed_time > 2.5:
             # print("right_start")
@@ -131,6 +129,7 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
 
+    # 주차구간을 빠져나온 직후 좌회전 마커가 있는 경우 (gtan를 이용한 연산이 불가능)
     def left2_turn_sign(self):
         if self.flag != "left2":
             return
@@ -160,13 +159,13 @@ class ID_control:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 2:
+        elif passed_time > 2: # 왼쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
-        elif passed_time > 1.5: # 제자리에서 왼쪽으로 제자리 회전
+        elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-        else: # 적절한 위치에서 우회전
+        else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.2
@@ -177,10 +176,10 @@ class ID_control:
         self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
         self.left_turn_sign() # 좌회전 신호를 4순위로 실행
-        self.left2_turn_sign()
+        self.left2_turn_sign() # 좌회전2 신호를 5순위로 실행
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
-        self.park_bool_pub.publish(self.park)
+        self.park_bool_pub.publish(self.park) # 주차 마커 인식 여부를 담은 변수를 퍼블리시
         self.rate.sleep() # 무한루프에서 설정한 주기를 맞추기 위해 기다리는 함수
 
 if __name__ == "__main__":
