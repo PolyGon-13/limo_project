@@ -136,7 +136,7 @@ class ID_control:
         if passed_time > 3.2:
             self.flag = None
             self.override_twist = False
-            self.park_to_left = Falses
+            self.park_to_left = False
         elif passed_time > 1.8:
             if abs(self.gtan) < 0.005:
                 self.drive_data.linear.x = 0.0
