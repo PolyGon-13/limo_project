@@ -138,8 +138,8 @@ class LimoController:
                 drive_data = self.new_drive_data # 마커 동작을 수행
             elif self.lane_connected == False and self.accel_bool == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
                 if abs(drive_data.angular.z) < 0.3 and self.park_bool == False:
-                    # 계산된 각속도가 0.3보다 작거나(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
-                    # 또는 주차 마커를 인식한 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
+                    # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
+                    # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
                     drive_data.linear.x *= 1.3 # 기존 속도의 1.3배로 달림
 
             # IMU 센서 동작
@@ -147,7 +147,7 @@ class LimoController:
                 self.heaviside = True
             elif abs(self.angular_y) < 0.05:
                 self.heaviside = False
-
+            '''
             # 라이다 동작
             if self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
                 # print("lidar_stop")
@@ -159,7 +159,7 @@ class LimoController:
             elif self.heaviside == True: # imu 센서가 로봇의 기울어짐을 감지한 경우
                 drive_data.linear.x /= 2
                 drive_data.angular.z = 0.0
-
+            '''
             # 리모 모드에 따른 동작
             if self.limo_mode == "diff": # differential mdoe인 경우 (주황색)
                 self.drive_pub.publish(drive_data)
@@ -170,7 +170,7 @@ class LimoController:
             rospy.logwarn(e)
             
 def run():
-    new_class = LimoController()
+    new_class = LimoController()ㄴ
     while not rospy.is_shutdown():
         if new_class.left_receiveimage: # 카메라에서 이미지를 받아온 후 aruco_maker 관련 노드를 실행 (카메라 충돌 방지)
             new_class.roslaunch("marker.launch")
