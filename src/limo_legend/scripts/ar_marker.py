@@ -10,7 +10,6 @@ import time
 class ID_control:
     def __init__(self):
         rospy.init_node("aruco")
-
         self.drive_data = Twist() # 주행 데이터를 담을 drive_data를 Twist 메시지로 선언
         self.override_twist = False # aruco marker를 인식했는지 여부를 저장
         self.kim_distance=0  # 수학적으로 계산 마커와의 거리를 저장
