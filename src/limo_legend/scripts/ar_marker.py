@@ -132,7 +132,7 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.5:
+        if passed_time > 3.2:
             self.flag = None
             self.override_twist = False
             self.park_to_left = False
