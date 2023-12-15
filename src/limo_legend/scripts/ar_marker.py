@@ -61,7 +61,7 @@ class ID_control:
                     self.found_sign("left")
                 elif abs(self.gtan) > 0:
                     self.found_sign("left2")
-            elif marker.id == 3 and self.gtan > -0.5:
+            elif marker.id == 3:
                 self.found_sign("park")
                 self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
     
@@ -115,6 +115,7 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time 
+        print("left1")
         if passed_time > 5.5:
             self.flag = None
             # rospy.loginfo("LEFT Marker End")
@@ -132,6 +133,7 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
+        print("left2")
         if passed_time > 3.7:
             self.flag = None
             self.override_twist = False         
