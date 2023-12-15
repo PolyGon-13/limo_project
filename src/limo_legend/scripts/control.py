@@ -170,7 +170,7 @@ class LimoController:
             rospy.logwarn(e)
             
 def run():
-    new_class = LimoController()ㄴ
+    new_class = LimoController()
     while not rospy.is_shutdown():
         if new_class.left_receiveimage: # 카메라에서 이미지를 받아온 후 aruco_maker 관련 노드를 실행 (카메라 충돌 방지)
             new_class.roslaunch("marker.launch")
