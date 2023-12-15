@@ -167,7 +167,7 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
         elif passed_time > 2.5:
-            if abs(self.gtan) == 0.0:
+            if abs(self.gtan) < 0.05:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.0
             else:
