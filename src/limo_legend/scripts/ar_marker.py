@@ -156,9 +156,9 @@ class ID_control:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 2: # 왼쪽으로 180도 제자리 회전
+        elif passed_time > 2: # 오른쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = 1.0
+            self.drive_data.angular.z = -1.0
         elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
