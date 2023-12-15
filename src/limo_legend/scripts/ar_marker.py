@@ -138,8 +138,8 @@ class ID_control:
             self.override_twist = False
             self.park_to_left = False
         elif passed_time > 2.3:
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 0.1
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = 1.0
         elif passed_time > 1.5:
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = 0.0
