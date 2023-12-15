@@ -77,9 +77,9 @@ class LaneDetection:
     
     # 화면에 출력
     def visResult(self):
-        pass
+        # pass
         # cv2.circle(self.cropped_image, (self.x, self.y), 10, 255, -1)
-        # cv2.imshow("lane_original", self.frame)
+        cv2.imshow("lane_original", self.frame)
         # cv2.imshow("lane_thresholded_left", self.thresholded_image)
         # cv2.imshow("lane_thresholded_right", self.thresholded_image2)
         # cv2.waitKey(1)
