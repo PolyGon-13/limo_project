@@ -108,19 +108,19 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0        
+            self.drive_data.angular.z = -1.0
 
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
         if self.flag != "left": # main함수에 의해 계속 실행되므로 left 신호가 아니면 패스
             return
 
-        passed_time = rospy.get_time() - self.start_time 
+        passed_time = rospy.get_time() - self.start_time
         if passed_time > 5.5:
             self.flag = None
             # rospy.loginfo("LEFT Marker End")
         elif passed_time > 5:
-            self.override_twist = False         
+            self.override_twist = False
         elif passed_time > 3.5:
             # print("left_start")
             self.override_twist = True
@@ -133,14 +133,14 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.7:
+        if passed_time > 3.2:
             self.flag = None
             self.override_twist = False
             self.park_to_left = False
-        elif passed_time > 2.3:
+        elif passed_time > 1.8:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
-        elif passed_time > 1.5:
+        elif passed_time > 1:
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = 0.0
         elif passed_time > 0.5:
@@ -154,12 +154,12 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 5.5:
+        if passed_time > 5.8:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 2.5: # 오른쪽으로 180도 제자리 회전
+        elif passed_time > 2.8: # 오른쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
         elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
