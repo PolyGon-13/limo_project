@@ -132,6 +132,18 @@ class LimoController:
             if self.lane_connected == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범한 경우
                 drive_data.angular.z = self.distance_left * self.LATERAL_GAIN # 오른쪽 카메라의 계산값은 무시하고 왼쪽 차선 정보를 이용
 
+            # 라이다 동작
+            if self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
+                # print("lidar_stop")
+                drive_data.linear.x = 0.0
+                drive_data.angular.z = -3.0 # 제자리 회전할 각속도
+            elif self.e_stop == "Warning": # 라이다가 장애물을 감지한 경우
+                drive_data.linear.x = 0.0
+                drive_data.angular.z = 0.0
+            elif self.heaviside == True: # imu 센서가 로봇의 기울어짐을 감지한 경우
+                drive_data.linear.x /= 2
+                drive_data.angular.z = 0.0
+
             # 마커 감지 유무에 따른 마커 동작
             if self.override_twist == True: # 마커를 인식한 경우
                 # if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
@@ -147,18 +159,6 @@ class LimoController:
                 self.heaviside = True
             elif abs(self.angular_y) < 0.05:
                 self.heaviside = False
-
-            # 라이다 동작
-            if self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
-                print("lidar_stop")
-                drive_data.linear.x = 0.0
-                drive_data.angular.z = -3.0 # 제자리 회전할 각속도
-            elif self.e_stop == "Warning": # 라이다가 장애물을 감지한 경우
-                drive_data.linear.x = 0.0
-                drive_data.angular.z = 0.0
-            elif self.heaviside == True: # imu 센서가 로봇의 기울어짐을 감지한 경우
-                drive_data.linear.x /= 2
-                drive_data.angular.z = 0.0
 
             # 리모 모드에 따른 동작
             if self.limo_mode == "diff": # differential mdoe인 경우 (주황색)
