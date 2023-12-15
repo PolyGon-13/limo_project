@@ -41,7 +41,7 @@ class ID_control:
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
-        print(self.gtan)
+        # print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -54,15 +54,12 @@ class ID_control:
 
             if marker.id == 0:
                 self.found_sign("stop")
-            elif marker.id == 1:
-                if self.gtan > -0.5:
+            elif marker.id == 1 and self.gtan > -0.5:
                     self.found_sign("right")
-                else:
-                    self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5:
                     self.found_sign("left")
-                else:
+                elif abs(self.gtan) > 0 and self.kim_distance > 0.77:
                     self.found_sign("left2")
             elif marker.id == 3:
                 self.found_sign("park")
@@ -159,9 +156,9 @@ class ID_control:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 2: # 오른쪽으로 180도 제자리 회전 (왼쪽으로 돌면 라이다가 표지판 감지하는 듯)
+        elif passed_time > 2: # 왼쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0
+            self.drive_data.angular.z = 1.0
         elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
