@@ -147,7 +147,7 @@ class LimoController:
                 self.heaviside = True
             elif abs(self.angular_y) < 0.05:
                 self.heaviside = False
-            '''
+            
             # 라이다 동작
             if self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
                 # print("lidar_stop")
@@ -159,7 +159,7 @@ class LimoController:
             elif self.heaviside == True: # imu 센서가 로봇의 기울어짐을 감지한 경우
                 drive_data.linear.x /= 2
                 drive_data.angular.z = 0.0
-            '''
+            
             # 리모 모드에 따른 동작
             if self.limo_mode == "diff": # differential mdoe인 경우 (주황색)
                 self.drive_pub.publish(drive_data)
