@@ -62,7 +62,6 @@ class ID_control:
                 elif abs(self.gtan) > 0 and self.kim_distance < 0.77:
                     self.found_sign("left2")
             elif marker.id == 3 and self.gtan > -0.5:
-                print("주차 시작")
                 self.found_sign("park")
                 self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
     
@@ -165,6 +164,7 @@ class ID_control:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
+            print("주차시작")
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
