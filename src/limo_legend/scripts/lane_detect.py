@@ -82,7 +82,7 @@ class LaneDetection:
         cv2.imshow("lane_original", self.frame)
         # cv2.imshow("lane_thresholded_left", self.thresholded_image)
         # cv2.imshow("lane_thresholded_right", self.thresholded_image2)
-        # cv2.waitKey(1)
+        cv2.waitKey(1)
 
     def image_topic_callback(self, img):
         self.frame = self.cvbridge.compressed_imgmsg_to_cv2(img, "bgr8")
