@@ -16,6 +16,7 @@ class ID_control:
         self.kim_distance=0  # 수학적으로 계산 마커와의 거리를 저장
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
+        self.park_to_left = False
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.crosswalk_detected = False # crosswalk_detect.py로부터 받아오는 횡단보도 인식여부
         self.crosswalk_distance = 0 # crosswalk_detect.py로부터 받아오는 횡단보도와의 거리       
@@ -59,7 +60,7 @@ class ID_control:
             elif marker.id == 2:
                 if self.gtan < 0.5:
                     self.found_sign("left")
-                elif abs(self.gtan) > 0:
+                elif self.park_to_left == True:
                     self.found_sign("left2")
             elif marker.id == 3:
                 self.found_sign("park")
@@ -136,7 +137,8 @@ class ID_control:
         print("left2")
         if passed_time > 3.7:
             self.flag = None
-            self.override_twist = False         
+            self.override_twist = False
+            self.park_to_left = False
         elif passed_time > 2.3:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.1
@@ -168,6 +170,7 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             print("주차시작")
             self.override_twist = True
+            self.park_to_left = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
     
