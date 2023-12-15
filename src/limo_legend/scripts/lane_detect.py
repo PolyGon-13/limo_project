@@ -14,7 +14,6 @@ class LaneDetection:
         self.YELLOW_LANE_LOW_TH = np.array([0, 90, 100]) # hls 색 영역의 최솟값 설정
         self.YELLOW_LANE_HIGH_TH = np.array([60, 220, 255]) # hls 색 영역의 최댓값 설정
         self.cvbridge = CvBridge() # 실시간 스트리밍
-        self.left = False
         self.viz = rospy.get_param("~visualization", True)
         rospy.Subscriber(rospy.get_param("~image_topic_name", "/camera/rgb/image_raw/compressed"), CompressedImage, self.image_topic_callback)
         self.distance_pub1 = rospy.Publisher("/limo/lane_left", Int32, queue_size=5)
