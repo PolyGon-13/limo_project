@@ -16,6 +16,7 @@ class ID_control:
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
         self.park_to_left = False
+        self.park_to_right = False
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.crosswalk_detected = False # crosswalk_detect.py로부터 받아오는 횡단보도 인식여부
         self.crosswalk_distance = 0 # crosswalk_detect.py로부터 받아오는 횡단보도와의 거리       
@@ -41,7 +42,7 @@ class ID_control:
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
-        print(self.gtan)
+        # print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -54,8 +55,11 @@ class ID_control:
 
             if marker.id == 0:
                 self.found_sign("stop")
-            elif marker.id == 1 and self.gtan > -0.5:
+            elif marker.id == 1:
+                if self.gtan > -0.5 and self.park_to_right == False:
                     self.found_sign("right")
+                if self.crosswalk_detected == True and self.park_to_right == True:
+                    self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5 and self.park_to_left == False:
                     self.found_sign("left")
@@ -109,6 +113,24 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
 
+    # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
+    def right2_turn_sign(self):
+        if self.flag != "right2":
+            return
+
+        passed_time = rospy.get_time() - self.start_time
+        if passed_time > 3.2:
+            self.flag = None
+            self.override_twist = False
+            self.park_to_right = False
+        elif passed_time > 1: # 오른쪽으로 제자리 회전
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = 0.0
+        elif passed_time > 0.5: # 회전할 위치까지 전진
+            self.override_twist = True
+            self.drive_data.linear.x = 0.3
+            self.drive_data.angular.z = 0.0
+
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
         if self.flag != "left": # main함수에 의해 계속 실행되므로 left 신호가 아니면 패스
@@ -161,7 +183,7 @@ class ID_control:
         elif passed_time > 3.8: # 오른쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
-        elif passed_time > 2.5:
+        elif passed_time > 2.5: # gtan 값을 이용해 주차공간 내에서 정렬
             if abs(self.gtan) < 0.05:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.0
@@ -174,16 +196,18 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park_to_left = True
+            self.park_to_right = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
-    def main(self):
+    def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
         self.park_sign() # 주차 신호를 1순위로 실행
         self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
         self.left_turn_sign() # 좌회전 신호를 4순위로 실행
-        self.left2_turn_sign() # 좌회전2 신호를 5순위로 실행
+        self.right2_turn_sign() # 우회전2 신호를 5순위로 실행
+        self.left2_turn_sign() # 좌회전2 신호를 6순위로 실행
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
         self.park_bool_pub.publish(self.park) # 주차 마커 인식 여부를 담은 변수를 퍼블리시
