@@ -58,7 +58,7 @@ class ID_control:
             elif marker.id == 1 and self.gtan > -0.5:
                     self.found_sign("right")
             elif marker.id == 2:
-                if self.gtan < 0.5:
+                if self.gtan < 0.5 and self.park_to_left == False:
                     self.found_sign("left")
                 elif self.park_to_left == True:
                     self.found_sign("left2")
@@ -156,19 +156,18 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 5:
+        if passed_time > 5.5:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 2: # 오른쪽으로 180도 제자리 회전
+        elif passed_time > 2.5: # 오른쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
         elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
-            self.drive_data.linear.x = 0.3
+            self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = 0.0
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
-            print("주차시작")
             self.override_twist = True
             self.park_to_left = True
             self.drive_data.linear.x = 0.3
