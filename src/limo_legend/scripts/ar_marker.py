@@ -41,7 +41,7 @@ class ID_control:
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
-        print(self.gtan)
+        # print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -61,7 +61,8 @@ class ID_control:
                     self.found_sign("left")
                 elif abs(self.gtan) > 0 and self.kim_distance < 0.77:
                     self.found_sign("left2")
-            elif marker.id == 3:
+            elif marker.id == 3 and self.gtan > -0.5:
+                print("주차 시작")
                 self.found_sign("park")
                 self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
     
