@@ -150,7 +150,7 @@ class LimoController:
 
             # 라이다 동작
             if self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
-                # print("lidar_stop")
+                print("lidar_stop")
                 drive_data.linear.x = 0.0
                 drive_data.angular.z = -2.0 # 제자리 회전할 각속도
             elif self.e_stop == "Warning": # 라이다가 장애물을 감지한 경우
