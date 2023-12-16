@@ -87,8 +87,7 @@ class ID_control:
         if self.flag != "stop": # main함수에 의해 계속 실행되므로 stop 신호가 아니면 패스
             return
         
-        if self.override_twist == False:
-            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
+        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
         if passed_time > 1.2:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
@@ -124,8 +123,7 @@ class ID_control:
         if self.flag != "right2":
             return
 
-        if self.override_twist == False:
-            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 3.7:
             self.flag = None
@@ -144,8 +142,7 @@ class ID_control:
         if self.flag != "left": # main함수에 의해 계속 실행되므로 left 신호가 아니면 패스
             return
 
-        if self.override_twist == False:
-            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 5.5:
             self.flag = None
@@ -163,8 +160,7 @@ class ID_control:
         if self.flag != "left2":
             return
 
-        if self.override_twist == False:
-            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 3.5:
             self.flag = None
@@ -193,8 +189,7 @@ class ID_control:
         if self.flag != "park": # main함수에 의해 계속 실행되므로 park 신호가 아니면 패스
             return
 
-        if self.override_twist == False:
-            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
+=       self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 6.8:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
