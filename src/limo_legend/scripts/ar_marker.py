@@ -106,8 +106,8 @@ class ID_control:
         if self.flag != "right": # main함수에 의해 계속 실행되므로 right 신호가 아니면 패스
             return
         
-        if self.override_twist == False:
-            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+        #if self.override_twist == False:
+            #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 4.2:
             self.flag = None
