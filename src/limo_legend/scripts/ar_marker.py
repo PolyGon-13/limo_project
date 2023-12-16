@@ -154,20 +154,23 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3:
+        if passed_time > 4:
             self.flag = None
             self.override_twist = False
             self.park_to_left = False
-        elif passed_time > 2:
+        elif passed_time > 3:
             if abs(self.gtan) < 0.05:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.0
             else:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.5
-        elif passed_time > 1:
+        elif passed_time > 2:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 1.0
+        elif passed_time > 1:
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = 0.0
         elif passed_time > 0.5:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
