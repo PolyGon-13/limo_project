@@ -86,7 +86,6 @@ class ID_control:
         if self.flag != "stop": # main함수에 의해 계속 실행되므로 stop 신호가 아니면 패스
             return
 
-        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
         if passed_time > 1.2:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
@@ -114,6 +113,7 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
+            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
 
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
     def right2_turn_sign(self):
@@ -209,7 +209,7 @@ class ID_control:
 
     def play_mp3(self, file_path):
         pygame.mixer.music.load(file_path)
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(0)
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
