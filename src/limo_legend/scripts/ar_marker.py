@@ -152,7 +152,7 @@ class ID_control:
     def left2_turn_sign(self):
         if self.flag != "left2":
             return
-
+        
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 3.5:
             self.flag = None
@@ -180,6 +180,8 @@ class ID_control:
     def park_sign(self):
         if self.flag != "park": # main함수에 의해 계속 실행되므로 park 신호가 아니면 패스
             return
+        elif self.crosswalk_detected == False:
+            return
 
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 6.8:
@@ -204,7 +206,7 @@ class ID_control:
             self.override_twist = True
             self.park_to_left = True
             self.park_to_right = True
-            self.drive_data.linear.x = 0.3
+            self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
