@@ -90,6 +90,7 @@ class ID_control:
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
         if passed_time > 1.2:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
+            self.audio = False
             # rospy.loginfo("STOP Marker End")
         elif passed_time > 0.5:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
@@ -132,6 +133,7 @@ class ID_control:
             self.flag = None
             self.override_twist = False
             self.park_to_right = False
+            self.audio = False
         elif passed_time > 2: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
@@ -151,6 +153,7 @@ class ID_control:
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 5.5:
             self.flag = None
+            self.audio = False
             # rospy.loginfo("LEFT Marker End")
         elif passed_time > 5:
             self.override_twist = False
@@ -173,6 +176,7 @@ class ID_control:
             self.flag = None
             self.override_twist = False
             self.park_to_left = False
+            self.audio = False
         elif passed_time > 2.2:
             if abs(self.gtan) < 0.05:
                 self.drive_data.linear.x = 0.0
@@ -201,6 +205,7 @@ class ID_control:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
+            self.audio = False
             # rospy.loginfo("PARK Marker End")
         elif passed_time > 4: # 오른쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
