@@ -6,6 +6,7 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Int32, Float64
 import time
+import pygame
 
 class ID_control:
     def __init__(self):
@@ -28,6 +29,7 @@ class ID_control:
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
+        pygame.mixer.init()
     
     # 횡단보도 인식여부 및 횡단보도와의 거리 서브스크라이브
     def crosswalk_distance_callback(self, _data):
@@ -84,7 +86,8 @@ class ID_control:
     def stop_sign(self):
         if self.flag != "stop": # main함수에 의해 계속 실행되므로 stop 신호가 아니면 패스
             return
-
+        
+        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
         if passed_time > 1.2:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
@@ -206,6 +209,11 @@ class ID_control:
             self.park_to_right = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
+
+    def play_mp3(self, file_path):
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load(file_path)
+            pygame.mixer.music.play()
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
