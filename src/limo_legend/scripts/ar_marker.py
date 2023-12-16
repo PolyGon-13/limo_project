@@ -207,7 +207,7 @@ class ID_control:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = -0.5
         elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
-            self.drive_data.linear.x = 0.3
+            self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = 0.0
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
@@ -217,9 +217,8 @@ class ID_control:
             self.drive_data.angular.z = -1.0
 
     def play_mp3(self, file_path):
-        if not pygame.mixer.music.get_busy():
-            pygame.mixer.music.load(file_path)
-            pygame.mixer.music.play()
+        pygame.mixer.music.load(file_path)
+        pygame.mixer.music.play()
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
