@@ -35,7 +35,7 @@ class ID_control:
             self.crosswalk_detected = False
             self.crosswalk_distance = _data.data # 횡단보도와의 거리 데이터를 받아옴 (활용할 방법이 있을까?)
         else: #횡단보도 인식
-            # print("crosswalk_detect")
+            print("crosswalk_detect")
             self.crosswalk_detected = True
             self.crosswalk_distance = _data.data
 
@@ -84,7 +84,7 @@ class ID_control:
     def stop_sign(self):
         if self.flag != "stop": # main함수에 의해 계속 실행되므로 stop 신호가 아니면 패스
             return
-
+        
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
         if passed_time > 1.2:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
@@ -144,7 +144,7 @@ class ID_control:
             self.override_twist = False
         elif passed_time > 3.5:
             # print("left_start")
-            self.override_twist = True
+            self.override_twist = True          
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
 
