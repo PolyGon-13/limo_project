@@ -16,6 +16,7 @@ class ID_control:
         self.kim_distance=0  # 수학적으로 계산 마커와의 거리를 저장
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
+        self.audio = False
         self.park_to_left = False
         self.park_to_right = False
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
@@ -107,13 +108,16 @@ class ID_control:
         if passed_time > 4.2:
             self.flag = None
             self.override_twist = False
+            self.audio = False
             # rospy.loginfo("RIGHT Marker End")
         elif passed_time > 2.5:
             # print("right_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
-            self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+                self.audio = True
 
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
     def right2_turn_sign(self):
