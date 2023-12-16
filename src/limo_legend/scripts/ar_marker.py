@@ -51,7 +51,7 @@ class ID_control:
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
-            # print(self.kim_distance)
+            print(self.kim_distance)
 
             if marker.id == 0:
                 self.found_sign("stop")
@@ -153,17 +153,19 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.2:
+        if passed_time > 3:
             self.flag = None
             self.override_twist = False
             self.park_to_left = False
-        elif passed_time > 2.7:
+        '''
+        elif passed_time > 3:
             if abs(self.gtan) < 0.05:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.0
             else:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.5
+        '''
         elif passed_time > 1.5:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 1.0
