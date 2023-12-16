@@ -42,7 +42,7 @@ class ID_control:
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
-        print(self.gtan)
+        # print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -129,7 +129,7 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-
+            
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
         if self.flag != "left": # main함수에 의해 계속 실행되므로 left 신호가 아니면 패스
@@ -153,10 +153,17 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3:
+        if passed_time > 3.5:
             self.flag = None
             self.override_twist = False
             self.park_to_left = False
+        elif paseed_time > 3:
+            if abs(self.gtan) < 0.05:
+                self.drive_data.linear.x = 0.0
+                self.drive_data.angular.z = 0.0
+            else:
+                self.drive_data.linear.x = 0.0
+                self.drive_data.angular.z = 0.5
         elif passed_time > 1.5:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 1.0
