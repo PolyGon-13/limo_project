@@ -98,6 +98,9 @@ class ID_control:
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
+                self.audio = True
 
     # 1번 마커(우회전 신호)를 인식하였다면 아래의 동작 수행
     def right_turn_sign(self):
@@ -136,6 +139,9 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+                self.audio = True
             
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
@@ -153,6 +159,9 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+                self.audio = True
 
     # 주차구간을 빠져나온 직후 좌회전 마커가 있는 경우 (gtan를 이용한 연산이 불가능)
     def left2_turn_sign(self):
@@ -178,6 +187,9 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+                self.audio = True
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
@@ -210,6 +222,9 @@ class ID_control:
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.2
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
+                self.audio = True
 
     def play_mp3(self, file_path):
         pygame.mixer.music.load(file_path)
