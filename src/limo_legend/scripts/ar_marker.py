@@ -187,7 +187,10 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
         elif passed_time > 2.5: # gtan 값을 이용해 주차공간 내에서 정렬
-            while abs(self.gtan) > 0.05:
+            if abs(self.gtan) < 0.0005:
+                self.drive_data.linear.x = 0.0
+                self.drive_data.angular.z = 0.0
+            else:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.5
         elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
