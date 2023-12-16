@@ -67,7 +67,6 @@ class ID_control:
                     self.found_sign("left2")
             elif marker.id == 3:
                 self.found_sign("park")
-                self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
     
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
     def found_sign(self, _data):
@@ -204,6 +203,7 @@ class ID_control:
             self.override_twist = True
             self.park_to_left = True
             self.park_to_right = True
+            self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
     
