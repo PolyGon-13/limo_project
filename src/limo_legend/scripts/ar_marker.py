@@ -42,7 +42,7 @@ class ID_control:
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
-        # print(self.gtan)
+        print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -51,7 +51,7 @@ class ID_control:
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
-            print(self.kim_distance)
+            # print(self.kim_distance)
 
             if marker.id == 0:
                 self.found_sign("stop")
@@ -166,7 +166,7 @@ class ID_control:
                 self.drive_data.angular.z = 0.5
         elif passed_time > 1:
             self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 1.0
+            self.drive_data.angular.z = 1.2
         elif passed_time > 0.5:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
