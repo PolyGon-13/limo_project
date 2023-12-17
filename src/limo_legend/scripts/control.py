@@ -100,7 +100,6 @@ class LimoController:
     # lidar_stop.py로부터 받아온 라이다가 장애물을 인식한 시점부터 흐른 시간 변수에 저장
     def lidar_timer_callback(self, _data):
         self.lidar_timer = _data.data
-        print(self.lidar_timer)
 
     # ar_marker.py로부터 받아온 마커에 따른 주행 데이터를 변수에 저장
     def marker_cmd_vel_callback(self, _data):
