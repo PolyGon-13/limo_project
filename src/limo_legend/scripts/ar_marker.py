@@ -141,7 +141,6 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-            print("right")
             if not self.audio:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 self.audio = True
