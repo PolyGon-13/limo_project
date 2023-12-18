@@ -150,7 +150,7 @@ class LimoController:
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
                     elif self.stop_bool == False:
-                        if self.laned_connected == True:
+                        if self.lane_connected == True:
                             drive_data.linear.x *= 1.4
                         else:
                             drive_data.linear.x *= 4
