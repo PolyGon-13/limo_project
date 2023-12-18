@@ -54,7 +54,7 @@ class ID_control:
             elif marker.id == 1:
                 if self.right_second == False:
                     self.found_sign("right")
-                if self.right_second == True:
+                elif self.right_second == True:
                     self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5 and self.park_to_left == False:
@@ -129,7 +129,7 @@ class ID_control:
             self.flag = None
             self.override_twist = False
             #self.audio = False
-        elif passed_time > 2: # 오른쪽으로 제자리 회전
+        elif passed_time > 1: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.2
             #if not self.audio:
