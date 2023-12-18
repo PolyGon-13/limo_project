@@ -87,11 +87,11 @@ class ID_control:
             return
         
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.7:
+        if passed_time > 3.9:
             self.flag = None
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
-        elif passed_time > 2.2:
+        elif passed_time > 2.4:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
@@ -113,7 +113,7 @@ class ID_control:
             self.override_twist = True
             self.right_good = False
             print("2222")
-            self.drive_data.linear.x = 0.2
+            self.drive_data.linear.x = 0.15
             self.drive_data.angular.z = -1.2
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
