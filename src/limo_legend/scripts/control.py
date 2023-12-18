@@ -139,8 +139,6 @@ class LimoController:
             # 라인 겹침 처리
             if self.lane_connected == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범한 경우
                 drive_data.angular.z = self.distance_left * self.LATERAL_GAIN # 오른쪽 카메라의 계산값은 무시하고 왼쪽 차선 정보를 이용
-                elap_time = rospy.get_time() - self.lane_connected_time
-
 
             # 마커 감지 유무에 따른 마커 동작
             if self.override_twist == True: # 마커를 인식한 경우
@@ -154,6 +152,7 @@ class LimoController:
                         drive_data.linear.x *= 1.4
                     elif self.stop_bool == False:
                         if self.lane_connected == True:
+                            elap_time = rospy.get_time() - self.lane_connected_time
                             if elap_time < 10:
                                 drive_data.linear.x *= 1.4
                         else:
