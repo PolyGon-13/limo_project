@@ -45,7 +45,7 @@ class ID_control:
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
-                if self.right_good == False:
+                if self.gtan > -0.5 and self.right_good == False:
                     self.found_sign("right")
                 if self.right_good == True:
                     self.found_sign("right2")
@@ -58,7 +58,7 @@ class ID_control:
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
             if self.kim_distance > 0.8 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
                 return
-            if self.gtan < -0.5 and _data == "right":
+            if  self.kim_distance > 0.77 and _data == "right":
                 return
             else:
                 self.start_time = rospy.get_time()
