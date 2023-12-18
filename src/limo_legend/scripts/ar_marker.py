@@ -6,7 +6,7 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Int32, Float64
 import time
-import simplesudio as sa
+import simpleaudio as sa
 
 class ID_control:
     def __init__(self):
