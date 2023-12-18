@@ -40,7 +40,6 @@ class ID_control:
             # print("crosswalk_detect")
             self.crosswalk_detected = True
             self.crosswalk_distance = _data.data
-            print("dddddd")
 
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
@@ -61,7 +60,7 @@ class ID_control:
             elif marker.id == 1:
                 if self.gtan > -0.5 and self.right_good == False:
                     self.found_sign("right")
-                if self.right_good == True:
+                if self.right_good == True and self.crosswalk_detected == True:
                     self.found_sign("right2")
             elif marker.id == 3:
                 self.found_sign("park")
@@ -119,15 +118,15 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.9:
+        if passed_time > 2.9:
             self.flag = None
             self.right_good = False
             self.override_twist = False
             self.park_to_right = False
-        elif passed_time > 3.3: # 오른쪽으로 제자리 회전
+        elif passed_time > 1.4: # 오른쪽으로 제자리 회전
             self.override_twist = True
             print("2222")
-            self.drive_data.linear.x = 0.0
+            self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
