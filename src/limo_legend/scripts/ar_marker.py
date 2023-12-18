@@ -123,7 +123,6 @@ class ID_control:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 self.audio = True
 
-    '''
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
     def right2_turn_sign(self):
         if self.flag != "right2":
@@ -146,7 +145,6 @@ class ID_control:
             if not self.audio:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 self.audio = True
-    '''
             
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
@@ -244,7 +242,7 @@ class ID_control:
         self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
         self.left_turn_sign() # 좌회전 신호를 4순위로 실행
-        self.right2_turn_sign() # 우회전2 신호를 5순위로 실행
+        # self.right2_turn_sign() # 우회전2 신호를 5순위로 실행
         self.left2_turn_sign() # 좌회전2 신호를 6순위로 실행
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
