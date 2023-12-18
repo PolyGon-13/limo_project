@@ -6,7 +6,7 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Int32, Float64
 import time
-import pygame
+# import pygame
 
 class ID_control:
     def __init__(self):
@@ -24,14 +24,14 @@ class ID_control:
         self.crosswalk_distance = 0 # crosswalk_detect.py로부터 받아오는 횡단보도와의 거리       
         self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
-        pygame.mixer.init()
+        # pygame.mixer.init()
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
-        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/start.mp3')
+        # self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/start.mp3')
     
     # 횡단보도 인식여부 및 횡단보도와의 거리 서브스크라이브
     def crosswalk_distance_callback(self, _data):
@@ -230,9 +230,9 @@ class ID_control:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
                 #self.audio = True
 
-    def play_mp3(self, file_path):
-        pygame.mixer.music.load(file_path)
-        pygame.mixer.music.play(0)
+    # def play_mp3(self, file_path):
+        # pygame.mixer.music.load(file_path)
+        # pygame.mixer.music.play(0)
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
