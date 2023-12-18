@@ -4,7 +4,6 @@
 import rospy
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
-from cv_bridge import CvBridge
 from std_msgs.msg import Bool, Int32, Float64
 import time
 
@@ -22,7 +21,6 @@ class ID_control:
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
-        self.cvbridge = CvBridge()
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
@@ -43,9 +41,6 @@ class ID_control:
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
             # print(self.kim_distance)
-
-            bgr_image = self.cvbridge.compressed_imgmsg_to_cv2(marker.image, "bgr8")
-            hls_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HLS)
 
             if marker.id == 0:
                 self.found_sign("stop")
