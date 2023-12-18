@@ -94,6 +94,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
+            print("1111")
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
 
@@ -113,6 +114,7 @@ class ID_control:
         else: # 회전할 위치까지 전진
             self.override_twist = True
             self.right_good = False
+            print("2222")
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0         
 
