@@ -119,7 +119,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.1
+            self.drive_data.angular.z = -1.2
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 #self.audio = True
