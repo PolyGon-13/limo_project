@@ -125,13 +125,13 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.5:
+        if passed_time > 3.2:
             self.flag = None
             self.override_twist = False
             #self.audio = False
         elif passed_time > 2: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0
+            self.drive_data.angular.z = -1.6
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 #self.audio = True
