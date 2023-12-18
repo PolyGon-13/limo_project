@@ -15,7 +15,7 @@ class LidarObjectDetector:
         self.sub_ls = rospy.Subscriber(rospy.get_param("lidar_topic_name", "/scan"), LaserScan, self.lidar_callback)
         self.E_STOP_MIN_ANGLE_DEG = -10.0
         self.E_STOP_MAX_ANGLE_DEG = 10.0
-        self.E_STOP_DISTANCE_METER = 0.3
+        self.E_STOP_DISTANCE_METER = 0.2
         self.E_STOP_COUNT = 5
         self.Warning_Status = False
         self.timer = rospy.get_time() + 5
