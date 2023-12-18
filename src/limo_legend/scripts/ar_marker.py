@@ -108,7 +108,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
-            print("1111")
+            # print("1111")
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.15
 
@@ -125,7 +125,7 @@ class ID_control:
             self.park_to_right = False
         elif passed_time > 1.4: # 오른쪽으로 제자리 회전
             self.override_twist = True
-            print("2222")
+            # print("2222")
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
 
@@ -148,7 +148,7 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
-            print("주차주차")
+            # print("주차주차")
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = -1.07
 
