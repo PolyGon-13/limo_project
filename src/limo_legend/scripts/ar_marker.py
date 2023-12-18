@@ -17,7 +17,7 @@ class ID_control:
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
         self.audio = False
-        #self.right_second = False
+        self.right_second = False
         self.park_to_left = False
         self.park_to_right = False
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
@@ -48,10 +48,10 @@ class ID_control:
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
-                if self.gtan > -0.5:
+                if self.gtan > -0.5 and self.right_second == False:
                     self.found_sign("right")
-                #if self.right_second == True:
-                    #self.found_sign("right2")
+                if self.right_second == True:
+                    self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5 and self.park_to_left == False:
                     self.found_sign("left")
@@ -65,8 +65,8 @@ class ID_control:
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
             if self.kim_distance > 0.83 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
                 return
-            elif self.kim_distance > 0.85 and _data == "stop": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
-                return
+            #elif self.kim_distance > 0.85 and _data == "stop": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
+                #return
             else:
                 self.start_time = rospy.get_time()
                 self.flag = _data # 저장해둔 문자열을 self.flag로 전달
@@ -84,7 +84,7 @@ class ID_control:
         elif passed_time > 0.5:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
-            # print("stop_start")
+            print("stop_start")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
@@ -106,7 +106,7 @@ class ID_control:
         elif passed_time > 2.5:
             # print("right_start")
             self.override_twist = True
-            #self.right_second = True
+            self.right_second = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.2
             #if not self.audio:
@@ -119,17 +119,13 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.2:
+        if passed_time > 4.5:
             self.flag = None
             self.override_twist = False
             #self.audio = False
-        elif passed_time > 2.5: # 오른쪽으로 제자리 회전
+        elif passed_time > 3: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
-        else: # 회전할 위치까지 전진
-            self.override_twist = True
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 0.0
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 #self.audio = True
@@ -190,13 +186,13 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 7:
-            self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
-            self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
-            self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
+        #if passed_time > 7:
+            #self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
+            #self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
+            #self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             #self.audio = False
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 4: # 오른쪽으로 180도 제자리 회전
+        if passed_time > 4: # 오른쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
         elif passed_time > 2.5: # gtan 값을 이용해 주차공간 내에서 정렬
