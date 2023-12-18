@@ -114,9 +114,7 @@ class ID_control:
         else: # 회전할 위치까지 전진
             self.override_twist = True
             self.right_good = False
-            print("2222")
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 0.0         
+            print("2222")       
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
