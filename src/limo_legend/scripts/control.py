@@ -20,6 +20,7 @@ class LimoController:
         self.REF_X2 = 240 # 오른쪽 차선의 Pixel 값
         self.left_receiveimage = False # 이미지 데이터를 받아오기 시작하면 True로 전환
         self.stop_bool = False
+        self.fast = False
         self.distance_left = 0 # 왼쪽 차선과의 거리
         self.distance_right = 0 # 오른쪽 차선과의 거리
         self.last_time = rospy.get_time() # imu 센서 데이터를 이용한 수학적 계산에서 dt를 구할 때 사용하기 위한 시간 정보
@@ -138,6 +139,7 @@ class LimoController:
         try:
             # 라인 겹침 처리
             if self.lane_connected == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범한 경우
+                self.fast = True
                 drive_data.angular.z = self.distance_left * self.LATERAL_GAIN # 오른쪽 카메라의 계산값은 무시하고 왼쪽 차선 정보를 이용
 
             # 마커 감지 유무에 따른 마커 동작
@@ -151,12 +153,11 @@ class LimoController:
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
                     elif self.stop_bool == False:
-                        if self.lane_connected == True:
-                            elap_time = rospy.get_time() - self.lane_connected_time
-                            if elap_time < 10:
-                                drive_data.linear.x *= 1.4
-                        else:
+                        if self.fast == True:
+                            drive_data.linear.x *= 1.4
+                        elif self.fast == False:
                             drive_data.linear.x *= 4
+                        
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
