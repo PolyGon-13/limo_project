@@ -117,6 +117,7 @@ class LimoController:
 
     def marker_stop_bool_callback(self, _data):
         self.stop_bool = _data.data
+        print(self.stop_bool)
     
     # imu 센서로부터 받아온 값들을 이용해 로봇의 기운 정도 계산 (합성곱 이용)
     def imu_callback(self, msg):
