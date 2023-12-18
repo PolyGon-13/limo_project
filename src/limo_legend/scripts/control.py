@@ -156,8 +156,8 @@ class LimoController:
                         if self.lane_connected == True:
                             if elap_time > 3:
                                 drive_data.linear.x *= 1.4
-                            else:
-                                drive_data.linear.x *= 4
+                        else:
+                            drive_data.linear.x *= 4
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
