@@ -36,11 +36,11 @@ class ID_control:
         if _data.data == -1: # 횡단보도 인식X
             self.crosswalk_detected = False
             self.crosswalk_distance = _data.data # 횡단보도와의 거리 데이터를 받아옴 (활용할 방법이 있을까?)
-            print("dddddd")
         else: #횡단보도 인식
             # print("crosswalk_detect")
             self.crosswalk_detected = True
             self.crosswalk_distance = _data.data
+            print("dddddd")
 
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
