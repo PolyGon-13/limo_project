@@ -154,7 +154,7 @@ class LimoController:
                         drive_data.linear.x *= 1.4
                     elif self.stop_bool == False:
                         if self.lane_connected == True:
-                            if elap_time > 3:
+                            if elap_time < 10:
                                 drive_data.linear.x *= 1.4
                         else:
                             drive_data.linear.x *= 4
