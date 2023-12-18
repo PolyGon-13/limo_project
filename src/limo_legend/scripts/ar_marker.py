@@ -225,7 +225,7 @@ class ID_control:
             self.park_to_right = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
             self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = -1.15
+            self.drive_data.angular.z = -1.0
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
                 #self.audio = True
