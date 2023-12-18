@@ -21,6 +21,7 @@ class ID_control:
         self.park_to_left = False
         self.park_to_right = False
         self.stop = False
+        self.collect = None
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
@@ -51,7 +52,7 @@ class ID_control:
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
-                if self.gtan > -0.5 and self.right_second == False:
+                if self.right_second == False:
                     self.found_sign("right")
                 if self.right_second == True:
                     self.found_sign("right2")
@@ -65,14 +66,15 @@ class ID_control:
     
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
     def found_sign(self, _data):
+        self.collect = _data
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
             if self.kim_distance > 0.83 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
                 return
-            #elif self.kim_distance > 0.85 and _data == "stop": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
-                #return
+            elif self.gtan < -0.5 and _data == "right": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
+                return
             else:
                 self.start_time = rospy.get_time()
-                self.flag = _data # 저장해둔 문자열을 self.flag로 전달
+                self.flag = self.collect # 저장해둔 문자열을 self.flag로 전달
 
     # 0번 마커(정지 신호)를 인식하였다면 아래의 동작 수행
     def stop_sign(self):
