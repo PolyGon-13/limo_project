@@ -149,8 +149,12 @@ class LimoController:
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
-                    elif self.stop_bool == False:
+                    elif self.stop_bool == False:                       
+                         pass_time = self.lane_connected_time - rospy.get_time()
+                         print(pass_time)
                         if self.lane_connected == True:
+                            self.lane_connected_time = rospy.get_time() + 2 if pass_time <= 0 else self.lane_connected_time
+                        if pass_time > 3:
                             drive_data.linear.x *= 1.4
                         else:
                             drive_data.linear.x *= 4
