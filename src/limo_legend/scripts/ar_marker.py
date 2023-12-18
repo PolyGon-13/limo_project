@@ -1,185 +1,161 @@
 #!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
-import rospy, roslaunch, os
-from pathlib import Path
-from std_msgs.msg import Int32, String, Bool, Float64
+import rospy
+from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Imu
-from object_msgs.msg import ObjectArray
-from limo_base.msg import LimoStatus
-import math
+from std_msgs.msg import Bool, Int32, Float64
+import time
 
-class LimoController:
+class ID_control:
     def __init__(self):
-        rospy.init_node('control', anonymous=True) # rospy에 코드의 이름을 알려줌. 'control'의 이름의 노드가 복수로 실행 가능하게 함.
-        self.limo_mode = "ackermann" # limo의 모드를 저장
-        self.BASE_SPEED = 0.3 # limo의 기본 주행 속도
-        self.LATERAL_GAIN = float(5 * 0.001) # 차선에 따라 회전할 정도를 지정하는 값
-        self.REF_X = 80 # 왼쪽 차선의 Pixel 값
-        self.REF_X2 = 240 # 오른쪽 차선의 Pixel 값
-        self.left_receiveimage = False # 이미지 데이터를 받아오기 시작하면 True로 전환
-        self.distance_left = 0 # 왼쪽 차선과의 거리
-        self.stop_bool = False
-        self.distance_right = 0 # 오른쪽 차선과의 거리
-        self.last_time = rospy.get_time() # imu 센서 데이터를 이용한 수학적 계산에서 dt를 구할 때 사용하기 위한 시간 정보
-        self.heaviside = False # imu 센서에서 기울어짐을 감지하였을 때 True로 전환
-        self.angular_y = 0 # y축을 기준으로 기울어진 정도를 저장
-        self.accel_bool = False # lane_detect.py로부터 받아옴. 두 차선을 감지(가속 구간) 신호를 받으면 True로 전환
-        self.lane_connected = False # lane_detect.py로부터 받아옴. 왼쪽 차선 정보가 2번째 카메라(오른쪽 차선)로 넘어가는 시점에 True로 전환
-        self.override_twist = False # ar_marker.py로부터 받아옴. 마커 감지 유무를 저장
-        self.park_bool = False # ar_marker.py로부터 받아옴. 주차 마커 감지 유무를 저장
-        self.e_stop = "Safe" # lidar_stop.py로부터 받아오는 라이다 감지 결과 저장
-        self.lidar_timer = 0.0 # lidar_stop.py로부터 받아오는 라이다가 장애물을 감지한 시점부터 흐른 시간 정보
-        self.launch = dict()
-        rospy.Subscriber("limo_status", LimoStatus, self.limo_status_callback)
-        rospy.Subscriber("/imu",Imu, self.imu_callback)
-        rospy.Subscriber("/limo/lane_left", Int32, self.lane_left_callback)
-        rospy.Subscriber("/limo/lane_right", Int32, self.lane_right_callback)
-        rospy.Subscriber("/limo/lane_connect", Bool, self.lane_connect_callback)
-        rospy.Subscriber("/limo/lane/accel", Bool, self.lane_accel_callback)
-        rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
-        rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
-        rospy.Subscriber("/limo/marker/park", Bool, self.marker_park_bool_callback)
-        rospy.Subscriber("/limo/marker/stop", Bool, self.marker_stop_bool_callback)
-        rospy.Subscriber("/limo/lidar_warn", String, self.lidar_warning_callback)
-        rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
-        self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
-        rospy.Timer(rospy.Duration(0.03), self.drive_callback) # 0.03초마다 self.drive_callback 메서드 실행
+        rospy.init_node("aruco")
+        self.drive_data = Twist() # 주행 데이터를 담을 drive_data를 Twist 메시지로 선언
+        self.override_twist = False # aruco marker를 인식했는지 여부를 저장
+        self.kim_distance=0  # 수학적으로 계산 마커와의 거리를 저장
+        self.flag = None # id값에 해당하는 문자열을 저장
+        self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
+        self.right_good = False
+        self.stop = False
+        self.collect = None
+        self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
+        self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
+        self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
+        self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
+        self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
+        self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
+        self.stop_bool_pub = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
+        rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
+        rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
 
-    # 코드 내에서 launch 파일을 실행시키기 위해 필요한 메서드
-    def roslaunch(self, filename):
-        if filename in self.launch:
+    # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
+    def global_gtan(self, _data):
+        self.gtan = _data.data
+        #print(self.gtan)
+    
+    # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
+    def marker_CB(self, data):
+        for marker in data.markers:
+            kim_x = marker.pose.pose.position.x
+            kim_y = marker.pose.pose.position.y
+            kim_z = marker.pose.pose.position.z
+            self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
+            # print(self.kim_distance)
+
+            if marker.id == 0:
+                self.found_sign("stop")
+            elif marker.id == 1:
+                if self.gtan > -0.5 and self.right_good == False:
+                    self.found_sign("right")
+                if self.right_good == True:
+                    self.found_sign("right2")
+            elif marker.id == 3:
+                self.found_sign("park")
+    
+    # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
+    def found_sign(self, _data):
+        self.collect = _data
+        if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
+            if self.kim_distance > 0.8 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
+                return
+            else:
+                self.start_time = rospy.get_time()
+                self.flag = self.collect # 저장해둔 문자열을 self.flag로 전달
+
+    # 0번 마커(정지 신호)를 인식하였다면 아래의 동작 수행
+    def stop_sign(self):
+        if self.flag != "stop": # main함수에 의해 계속 실행되므로 stop 신호가 아니면 패스
             return
-        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
-        roslaunch.configure_logging(uuid)
-        path = Path(os.path.abspath(__file__)).parent.parent.joinpath("launch/%s"%filename)
-        self.launch[filename] = roslaunch.parent.ROSLaunchParent(uuid, [str(path)])
-        self.launch[filename].start()
-    
-    # 리모 모드 설정
-    def limo_status_callback(self, _data):
-        if _data.motion_mode == 1:
-            if self.limo_mode == "ackermann":
-                pass
-            else:
-                self.limo_mode = "ackermann"
-                # rospy.loginfo("Mode Changed --> Ackermann")
+
+        passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
+        if passed_time > 6:
+            self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
+            # rospy.loginfo("STOP Marker End")
+        elif passed_time > 0.5:
+            self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
-            if self.limo_mode == "diff":
-                pass
-            else:
-                self.limo_mode = "diff"
-                # rospy.loginfo("Mode Changed --> Differential Drive")
+            # print("stop_start")
+            self.stop = True
+            print("stop")
+            self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = 0.0
 
-    # lane_detect.py로부터 받아온 왼쪽 차선 정보 처리
-    def lane_left_callback(self, _data):
-        self.left_receiveimage = True # 이미지 데이터를 받았음을 알림 -> marker.launch 파일 실행
-        if _data.data == -1: # 왼쪽 차선 인식X
-            self.distance_left = 0
-        else: # 왼쪽 차선 인식
-            self.distance_left = self.REF_X - _data.data # 거리 계산
-
-    # lane_detect.py로부터 받아온 오른쪽 차선 정보 처리
-    def lane_right_callback(self, _data):
-        if _data.data == -1: # 오른쪽 차선 인식X
-            self.distance_right = 0
-        else: # 오른쪽 차선 인식
-            self.distance_right = self.REF_X2 - _data.data # 거리 계산
-
-    # lane_detect.py로부터 받아온 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범했는 여부를 변수에 저장
-    def lane_connect_callback(self, _data):
-        self.lane_connected = _data.data
-
-    # lane_detect.py로부터 받아온 두 차선을 인식했는지 여부를 변수에 저장
-    def lane_accel_callback(self, _data):
-        self.accel_bool = _data.data
-            
-    # lidar_stop.py로부터 받아온 라이다의 장애물 인식 여부 정보 변수에 저장
-    def lidar_warning_callback(self, _data):
-        self.e_stop = _data.data
-
-    # lidar_stop.py로부터 받아온 라이다가 장애물을 인식한 시점부터 흐른 시간 변수에 저장
-    def lidar_timer_callback(self, _data):
-        self.lidar_timer = _data.data
-
-    # ar_marker.py로부터 받아온 마커에 따른 주행 데이터를 변수에 저장
-    def marker_cmd_vel_callback(self, _data):
-        self.new_drive_data = _data
-
-    # ar_marker.py로부터 받아온 마커 인식 여부를 변수에 저장
-    def marker_bool_callback(self, _data):
-        self.override_twist = _data.data
+    # 1번 마커(우회전 신호)를 인식하였다면 아래의 동작 수행
+    def right_turn_sign(self):
+        if self.flag != "right": # main함수에 의해 계속 실행되므로 right 신호가 아니면 패스
+            return
         
-    # ar_marker.py로부터 받아온 주차 마커 인식 여부를 변수에 저장
-    def marker_park_bool_callback(self, _data):
-        self.park_bool = _data.data    
+        passed_time = rospy.get_time() - self.start_time
+        if passed_time > 3.8:
+            self.flag = None
+            self.override_twist = False
+            # rospy.loginfo("RIGHT Marker End")
+        elif passed_time > 2.4:
+            # print("right_start")
+            self.override_twist = True
+            self.right_good = True
+            print("1111")
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = -1.15
 
-    def marker_stop_bool_callback(self, _data):
-        self.stop_bool = _data.data
+    # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
+    def right2_turn_sign(self):
+        if self.flag != "right2":
+            return
+
+        passed_time = rospy.get_time() - self.start_time
+        if passed_time > 4.9:
+            self.flag = None
+            self.right_good = False
+            self.override_twist = False
+            self.park_to_right = False
+        elif passed_time > 3.3: # 오른쪽으로 제자리 회전
+            self.override_twist = True
+            print("2222")
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = -1.0
+
+    # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
+    def park_sign(self):
+        if self.flag != "park": # main함수에 의해 계속 실행되므로 park 신호가 아니면 패스
+            return
+
+        passed_time = rospy.get_time() - self.start_time
+        if passed_time > 3.2:
+            #self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
+            #self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
+            self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = 0.0
+            # rospy.loginfo("PARK Marker End")
+        elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = 0.0
+        else: # 적절한 위치에서 우회전하여 주차공간에 진입
+            self.override_twist = True
+            self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
+            print("주차주차")
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = -1.07
+
     
-    # imu 센서로부터 받아온 값들을 이용해 로봇의 기운 정도 계산 (합성곱 이용)
-    def imu_callback(self, msg):
-        dt = rospy.get_time() - self.last_time 
-        self.last_time = rospy.get_time()
-        self.angular_y += msg.angular_velocity.y * dt
-        self.angular_y *= 1 - dt # 지속적인 오차 누적을 피하기 위해 해당 값을 0으로 수렴시키 위한 값을 곱해줌
-     
-    # 각각의 코드와 메서드들에서 처리한 주행 데이터를 처리 및 퍼블리시
-    def drive_callback(self, _event):
-        drive_data = Twist() # drive_data를 Twist 메시지 형태로 선언
-        # 기본 동작
-        drive_data.linear.x = self.BASE_SPEED
-        drive_data.angular.z = (self.distance_left + self.distance_right) * self.LATERAL_GAIN # 왼쪽 차선과 오른쪽 차선과의 거리를 이용한 각속도 계산
+    # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
+    def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
+        self.right_turn_sign() # 우회전 신호를 3순위로 실행
+        self.right2_turn_sign() # 우회전2 신호를 5순위로 실행
+        self.park_sign() # 주차 신호를 1순위로 실행
+        self.stop_sign() # 정지 신호를 2순위로 실행       
+        self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
+        self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
+        self.park_bool_pub.publish(self.park) # 주차 마커 인식 여부를 담은 변수를 퍼블리시
+        self.stop_bool_pub.publish(self.stop)
+        self.rate.sleep() # 무한루프에서 설정한 주기를 맞추기 위해 기다리는 함수
 
-        try:
-            # 라인 겹침 처리
-            if self.lane_connected == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범한 경우
-                drive_data.angular.z = self.distance_left * self.LATERAL_GAIN # 오른쪽 카메라의 계산값은 무시하고 왼쪽 차선 정보를 이용
-            # IMU 센서 동작
-            if abs(self.angular_y) > 0.05:
-                self.heaviside = True
-            elif abs(self.angular_y) < 0.05:
-                self.heaviside = False
-
-            # 마커 감지 유무에 따른 마커 동작
-            if self.override_twist == True: # 마커를 인식한 경우
-                # if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
-                drive_data = self.new_drive_data # 마커 동작을 수행
-            elif self.lane_connected == False and self.accel_bool == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
-                if abs(drive_data.angular.z) < 0.3 and self.park_bool == False:
-                    # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
-                    # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
-                    drive_data.linear.x *= 1.3 # 기존 속도의 1.3배로 달림
-            # 라이다 동작
-            elif self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
-                # print("lidar_stop")
-                drive_data.linear.x = 0.0
-                drive_data.angular.z = -3.0 # 제자리 회전할 각속도
-            elif self.e_stop == "Warning": # 라이다가 장애물을 감지한 경우
-                drive_data.linear.x = 0.0
-                drive_data.angular.z = 0.0
-            elif self.heaviside == True: # imu 센서가 로봇의 기울어짐을 감지한 경우
-                drive_data.linear.x /= 2
-                drive_data.angular.z = 0.0
-                       
-            # 리모 모드에 따른 동작
-            if self.limo_mode == "diff": # differential mdoe인 경우 (주황색)
-                self.drive_pub.publish(drive_data)
-            elif self.limo_mode == "ackermann": # ackermann mode인 경우 (초록색)
-                pass # 원래 추가적인 계산처리가 있지만 ackermann mode를 사용하지 않기 때문에 배제
-
-        except Exception as e:
-            rospy.logwarn(e)
-            
-def run():
-    new_class = LimoController()
-    while not rospy.is_shutdown():
-        if new_class.left_receiveimage: # 카메라에서 이미지를 받아온 후 aruco_maker 관련 노드를 실행 (카메라 충돌 방지)
-            new_class.roslaunch("marker.launch")
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
-        run()
-    except KeyboardInterrupt:
-        print("program down")
+        id_control = ID_control()
+        while not rospy.is_shutdown():
+            id_control.main()
+    except rospy.ROSInterruptException:
+        pass
