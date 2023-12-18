@@ -127,7 +127,7 @@ class ID_control:
         if passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = 0.0
-        else: # 적절한 위치에서 우회전하여 주차공간에 진입
+        elif: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
             self.drive_data.linear.x = 0.3
