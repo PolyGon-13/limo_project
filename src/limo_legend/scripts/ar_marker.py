@@ -89,12 +89,12 @@ class ID_control:
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 4.2:
             self.flag = None
-            self.right_good = True
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
         elif passed_time > 2.5:
             # print("right_start")
             self.override_twist = True
+            self.right_good = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
 
@@ -104,15 +104,16 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.2:
+        if passed_time > 4.5:
             self.flag = None
             self.override_twist = False
             self.park_to_right = False
-        elif passed_time > 2.5: # 오른쪽으로 제자리 회전
+        elif passed_time > 3: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
         else: # 회전할 위치까지 전진
             self.override_twist = True
+            self.right_good = False
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0         
 
