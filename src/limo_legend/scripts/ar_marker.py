@@ -31,7 +31,7 @@ class ID_control:
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
-        print(self.gtan)
+        # print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -45,7 +45,7 @@ class ID_control:
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
-                if self.gtan > -0.5 and self.right_good == False:
+                if self.right_good == False:
                     self.found_sign("right")
                 if self.right_good == True:
                     self.found_sign("right2")
@@ -57,6 +57,8 @@ class ID_control:
         self.collect = _data
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
             if self.kim_distance > 0.8 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
+                return
+            if self.gtan < -0.48 and _data == "right":
                 return
             else:
                 self.start_time = rospy.get_time()
@@ -87,11 +89,11 @@ class ID_control:
             return
         
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.9:
+        if passed_time > 2.9:
             self.flag = None
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
-        elif passed_time > 2.4:
+        elif passed_time > 1.4:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
