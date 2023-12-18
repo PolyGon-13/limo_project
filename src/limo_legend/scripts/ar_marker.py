@@ -68,7 +68,7 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
-        if passed_time > 1.2:
+        if passed_time > 6:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             # rospy.loginfo("STOP Marker End")
         elif passed_time > 0.5:
