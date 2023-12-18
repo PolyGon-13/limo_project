@@ -16,7 +16,7 @@ class ID_control:
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
         self.right_good = False
-        self.stop = False
+        # self.stop = False
         self.collect = None
         self.crosswalk_detected = False 
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
@@ -25,7 +25,7 @@ class ID_control:
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
-        self.stop_bool_pub = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
+        # self.stop_bool_pub = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
@@ -88,7 +88,7 @@ class ID_control:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
             # print("stop_start")
-            self.stop = True
+            # self.stop = True
             print("stop")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
@@ -135,14 +135,14 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3:
+        if passed_time > 3.2:
             #self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             #self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
             self.park = False # 주차 마커 인식 여부를 False로 전환 (다시 가속 가능)
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
             # rospy.loginfo("PARK Marker End")
-        elif passed_time > 1.4: # 조금 직진하여 주차공간에 완벽히 진입
+        elif passed_time > 1.5: # 조금 직진하여 주차공간에 완벽히 진입
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = 0.0
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
@@ -162,7 +162,7 @@ class ID_control:
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
         self.park_bool_pub.publish(self.park) # 주차 마커 인식 여부를 담은 변수를 퍼블리시
-        self.stop_bool_pub.publish(self.stop)
+        # self.stop_bool_pub.publish(self.stop)
         self.rate.sleep() # 무한루프에서 설정한 주기를 맞추기 위해 기다리는 함수
 
 if __name__ == "__main__":
