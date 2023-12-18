@@ -148,7 +148,7 @@ class LimoController:
                 drive_data = self.new_drive_data # 마커 동작을 수행
             elif self.lane_connected == False and self.accel_bool == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
                 if abs(drive_data.angular.z) < 0.3 and self.override_twist == False:
-                    drive_data.linear.x *= 4
+                    drive_data.linear.x *= 1.4
                     # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
                     #if self.stop_bool == True:
