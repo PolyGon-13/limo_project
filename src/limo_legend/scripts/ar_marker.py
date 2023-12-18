@@ -47,7 +47,7 @@ class ID_control:
             elif marker.id == 1:
                 if self.kim_distance < 0.86 and self.right_good == False:
                     self.found_sign("right")
-                if self.right_good == True and kim_distance < 0.86:
+                if self.right_good == True and self.kim_distance < 0.86:
                     self.found_sign("right2")
             elif marker.id == 3:
                 self.found_sign("park")
