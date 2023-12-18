@@ -46,7 +46,7 @@ class ID_control:
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
         self.gtan = _data.data
-        print(self.gtan)
+        # print(self.gtan)
     
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
@@ -119,7 +119,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0
+            self.drive_data.angular.z = -1.1
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 #self.audio = True
