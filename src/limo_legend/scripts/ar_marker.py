@@ -4,6 +4,7 @@
 import rospy
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
+from cv_bridge import CvBridge
 from std_msgs.msg import Bool, Int32, Float64
 import time
 
