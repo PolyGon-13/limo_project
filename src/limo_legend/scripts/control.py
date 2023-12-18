@@ -149,7 +149,7 @@ class LimoController:
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
-                    else self.stop_bool == False:
+                    elif self.stop_bool == False:
                         if self.laned_connected == True:
                             drive_data.linear.x *= 1.4
                         else:
