@@ -56,11 +56,6 @@ class ID_control:
                     self.found_sign("right")
                 elif self.right_second == True:
                     self.found_sign("right2")
-            elif marker.id == 2:
-                if self.gtan < 0.5 and self.park_to_left == False:
-                    self.found_sign("left")
-                if self.park_to_left == True:
-                    self.found_sign("left2")
             elif marker.id == 3:
                 self.found_sign("park")
     
@@ -132,58 +127,9 @@ class ID_control:
         elif passed_time > 1.6: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.6
+            print("rightright")
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
-                #self.audio = True
-            
-    # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
-    def left_turn_sign(self):
-        if self.flag != "left": # main함수에 의해 계속 실행되므로 left 신호가 아니면 패스
-            return
-
-        passed_time = rospy.get_time() - self.start_time
-        if passed_time > 5.5:
-            self.flag = None
-            #self.audio = False
-            # rospy.loginfo("LEFT Marker End")
-        elif passed_time > 5:
-            self.override_twist = False
-        elif passed_time > 3.5:
-            # print("left_start")
-            self.override_twist = True
-            self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = 1.0
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
-                #self.audio = True
-
-    # 주차구간을 빠져나온 직후 좌회전 마커가 있는 경우 (gtan를 이용한 연산이 불가능)
-    def left2_turn_sign(self):
-        if self.flag != "left2":
-            return
-
-        passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.7:
-            self.flag = None
-            self.override_twist = False
-            #self.park_to_left = False
-            #self.audio = False
-        elif passed_time > 2:
-            if abs(self.gtan) < 0.05:
-                self.drive_data.linear.x = 0.0
-                self.drive_data.angular.z = 0.0
-            else:
-                self.drive_data.linear.x = 0.0
-                self.drive_data.angular.z = 0.5
-        elif passed_time > 1:
-            self.drive_data.linear.x = 0.2
-            self.drive_data.angular.z = 1.2
-        elif passed_time > 0.5:
-            self.override_twist = True
-            self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = 0.0
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
                 #self.audio = True
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
@@ -231,8 +177,6 @@ class ID_control:
         self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
         self.right2_turn_sign()
-        # self.left_turn_sign() # 좌회전 신호를 4순위로 실행
-        # self.left2_turn_sign() # 좌회전2 신호를 6순위로 실행
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
         self.park_bool_pub.publish(self.park) # 주차 마커 인식 여부를 담은 변수를 퍼블리시
