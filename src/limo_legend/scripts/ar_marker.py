@@ -125,13 +125,13 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.5:
+        if passed_time > 3.5:
             self.flag = None
             self.override_twist = False
             #self.audio = False
-        elif passed_time > 1: # 오른쪽으로 제자리 회전
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = -1.2
+        elif passed_time > 2: # 오른쪽으로 제자리 회전
+            self.drive_data.linear.x = 0.0
+            self.drive_data.angular.z = -1.0
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 #self.audio = True
@@ -230,6 +230,7 @@ class ID_control:
         self.park_sign() # 주차 신호를 1순위로 실행
         self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
+        self.right2_turn_sign()
         # self.left_turn_sign() # 좌회전 신호를 4순위로 실행
         # self.left2_turn_sign() # 좌회전2 신호를 6순위로 실행
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
