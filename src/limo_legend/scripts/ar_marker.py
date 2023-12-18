@@ -87,7 +87,7 @@ class ID_control:
         elif passed_time > 0.5:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
-            print("stop_start")
+            # print("stop_start")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.stop = True
             self.drive_data.linear.x = 0.0
@@ -127,9 +127,9 @@ class ID_control:
             self.flag = None
             self.override_twist = False
             #self.audio = False
-        elif passed_time > 3: # 오른쪽으로 제자리 회전
-            self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0
+        elif passed_time > 2: # 오른쪽으로 제자리 회전
+            self.drive_data.linear.x = 0.3
+            self.drive_data.angular.z = -1.2
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 #self.audio = True
