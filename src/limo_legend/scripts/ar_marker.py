@@ -87,7 +87,7 @@ class ID_control:
             return
         
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.9:
+        if passed_time > 3.8:
             self.flag = None
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
@@ -114,7 +114,7 @@ class ID_control:
             self.right_good = False
             print("2222")
             self.drive_data.linear.x = 0.15
-            self.drive_data.angular.z = -1.23
+            self.drive_data.angular.z = -1.21
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
@@ -136,7 +136,7 @@ class ID_control:
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
             self.drive_data.linear.x = 0.2
-            self.drive_data.angular.z = -1.1
+            self.drive_data.angular.z = -1.07
 
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
