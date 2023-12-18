@@ -18,6 +18,7 @@ class ID_control:
         self.right_good = False
         self.stop = False
         self.collect = None
+        self.crosswalk_detected = False 
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
@@ -27,6 +28,19 @@ class ID_control:
         self.stop_bool_pub = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
+        rospy.Subscriber("/limo/crosswalk/distance", Int32, self.)
+
+
+    # 횡단보도 인식여부 및 횡단보도와의 거리 서브스크라이브
+    def crosswalk_distance_callback(self, _data):
+        if _data.data == -1: # 횡단보도 인식X
+            self.crosswalk_detected = False
+            self.crosswalk_distance = _data.data # 횡단보도와의 거리 데이터를 받아옴 (활용할 방법이 있을까?)
+            print("dddddd")
+        else: #횡단보도 인식
+            # print("crosswalk_detect")
+            self.crosswalk_detected = True
+            self.crosswalk_distance = _data.data
 
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
@@ -105,12 +119,12 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.1:
+        if passed_time > 4.9:
             self.flag = None
             self.right_good = False
             self.override_twist = False
             self.park_to_right = False
-        elif passed_time > 2.5: # 오른쪽으로 제자리 회전
+        elif passed_time > 3.3: # 오른쪽으로 제자리 회전
             self.override_twist = True
             print("2222")
             self.drive_data.linear.x = 0.0
