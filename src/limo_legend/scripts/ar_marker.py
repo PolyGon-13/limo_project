@@ -110,7 +110,7 @@ class ID_control:
             self.override_twist = False
             self.park_to_right = False
         elif passed_time > 2.7: # 오른쪽으로 제자리 회전
-            if self.kim_distance < 0.396:
+            if self.kim_distance < 0.4:
                 self.override_twist = True
                 self.right_good = False
                 print("2222")
