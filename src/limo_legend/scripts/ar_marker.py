@@ -101,12 +101,12 @@ class ID_control:
             return
         
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.2:
+        if passed_time > 3.9:
             self.flag = None
             self.override_twist = False
             #self.audio = False
             # rospy.loginfo("RIGHT Marker End")
-        elif passed_time > 2.5:
+        elif passed_time > 2.2:
             # print("right_start")
             self.override_twist = True
             self.right_second = True
