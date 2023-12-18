@@ -97,7 +97,7 @@ class ID_control:
             self.right_good = True
             print("1111")
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.2
+            self.drive_data.angular.z = -1.15
 
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
     def right2_turn_sign(self):
@@ -114,7 +114,7 @@ class ID_control:
             self.right_good = False
             print("2222")
             self.drive_data.linear.x = 0.15
-            self.drive_data.angular.z = -1.2
+            self.drive_data.angular.z = -1.23
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
