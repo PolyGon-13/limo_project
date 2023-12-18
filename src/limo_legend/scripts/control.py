@@ -148,7 +148,7 @@ class LimoController:
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
                     elif self.stop_bool == False:
-                        drive_data.linear.x *= 5 # 최대 속도로 달림
+                        drive_data.linear.x *= 4 # 최대 속도로 달림
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
