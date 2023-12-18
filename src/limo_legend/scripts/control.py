@@ -19,6 +19,7 @@ class LimoController:
         self.REF_X = 80 # 왼쪽 차선의 Pixel 값
         self.REF_X2 = 240 # 오른쪽 차선의 Pixel 값
         self.left_receiveimage = False # 이미지 데이터를 받아오기 시작하면 True로 전환
+        self.stop_bool = False
         self.distance_left = 0 # 왼쪽 차선과의 거리
         self.distance_right = 0 # 오른쪽 차선과의 거리
         self.last_time = rospy.get_time() # imu 센서 데이터를 이용한 수학적 계산에서 dt를 구할 때 사용하기 위한 시간 정보
