@@ -73,7 +73,7 @@ class ID_control:
     # 전달받은 문자열을 저장하고 특정 조건을 만족하면 동작 수행
     def found_sign(self, _data):
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
-            if self.kim_distance > 0.8 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
+            if self.kim_distance > 0.83 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
                 return
             elif self.kim_distance > 0.85 and _data == "stop": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
                 return
