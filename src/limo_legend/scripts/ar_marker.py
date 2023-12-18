@@ -46,7 +46,7 @@ class ID_control:
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
             # print(self.kim_distance)
-            # print(marker.id)
+            print(marker.id)
 
             if marker.id == 0:
                 self.found_sign("stop")
@@ -87,7 +87,7 @@ class ID_control:
         elif passed_time > 0.5:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         else:
-            # print("stop_start")
+            print("stop_start")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.stop = True
             self.drive_data.linear.x = 0.0
@@ -102,17 +102,17 @@ class ID_control:
             return
         
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.9:
+        if passed_time > 3.5:
             self.flag = None
             self.override_twist = False
             #self.audio = False
             # rospy.loginfo("RIGHT Marker End")
-        elif passed_time > 2.2:
+        elif passed_time > 2:
             # print("right_start")
             self.override_twist = True
             self.right_second = True
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.2
+            self.drive_data.angular.z = -1.0
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 #self.audio = True
