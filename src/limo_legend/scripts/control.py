@@ -23,6 +23,7 @@ class LimoController:
         self.stop_bool = False
         self.distance_right = 0 # 오른쪽 차선과의 거리
         self.last_time = rospy.get_time() # imu 센서 데이터를 이용한 수학적 계산에서 dt를 구할 때 사용하기 위한 시간 정보
+        self.boost_time = rospy.get_time()
         self.heaviside = False # imu 센서에서 기울어짐을 감지하였을 때 True로 전환
         self.angular_y = 0 # y축을 기준으로 기울어진 정도를 저장
         self.accel_bool = False # lane_detect.py로부터 받아옴. 두 차선을 감지(가속 구간) 신호를 받으면 True로 전환
@@ -146,6 +147,12 @@ class LimoController:
                     # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
                     drive_data.linear.x *= 4 # 기존 속도의 1.3배로 달림
+            if self.stop_bool and self.lane_connected:
+                drive_data.linear.x *= 1.4
+            elif not self.stop_bool and self.lane_connected:
+                self.boost_time = rospy.get_time() + 10
+                if self.boost_time > rospy.get_time():
+                    drive_data.linear.x *= 1.2
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
