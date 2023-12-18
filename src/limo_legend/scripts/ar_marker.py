@@ -28,7 +28,7 @@ class ID_control:
         self.stop_bool_pub = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
-        rospy.Subscriber("/limo/crosswalk/distance", Int32, self.)
+        rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
 
 
     # 횡단보도 인식여부 및 횡단보도와의 거리 서브스크라이브
