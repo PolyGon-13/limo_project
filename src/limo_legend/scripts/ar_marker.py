@@ -88,6 +88,7 @@ class ID_control:
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 4.2:
             self.flag = None
+            self.right_good = True
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
         elif passed_time > 2.5:
