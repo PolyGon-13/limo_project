@@ -105,7 +105,7 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.8:
+        if passed_time > 3:
             self.flag = None
             self.right_good = False
             self.override_twist = False
@@ -113,7 +113,7 @@ class ID_control:
         elif passed_time > 2: # 오른쪽으로 제자리 회전
             self.override_twist = True
             print("2222")
-            self.drive_data.linear.x = 0.3
+            self.drive_data.linear.x = 0.35
             self.drive_data.angular.z = -1.4
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
