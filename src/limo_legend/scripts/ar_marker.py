@@ -113,7 +113,7 @@ class ID_control:
         elif passed_time > 1.8: # 오른쪽으로 제자리 회전
             self.override_twist = True
             print("2222")
-            self.drive_data.linear.x = 0.5
+            self.drive_data.linear.x = 0.1
             self.drive_data.angular.z = -1.4
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
@@ -135,6 +135,7 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
+            print("주차주차")
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = -1.07
 
