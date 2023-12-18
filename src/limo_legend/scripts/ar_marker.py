@@ -61,8 +61,8 @@ class ID_control:
             elif marker.id == 1:
                 if self.gtan > -0.5 and self.park_to_right == False:
                     self.found_sign("right")
-                if self.park_to_right == True:
-                    self.found_sign("right2")
+                # if self.park_to_right == True:
+                    # self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5 and self.park_to_left == False:
                     self.found_sign("left")
@@ -123,6 +123,7 @@ class ID_control:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 self.audio = True
 
+    '''
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
     def right2_turn_sign(self):
         if self.flag != "right2":
@@ -145,6 +146,7 @@ class ID_control:
             if not self.audio:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 self.audio = True
+    '''
             
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
@@ -166,7 +168,7 @@ class ID_control:
             if not self.audio:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
                 self.audio = True
-
+    
     # 주차구간을 빠져나온 직후 좌회전 마커가 있는 경우 (gtan를 이용한 연산이 불가능)
     def left2_turn_sign(self):
         if self.flag != "left2":
