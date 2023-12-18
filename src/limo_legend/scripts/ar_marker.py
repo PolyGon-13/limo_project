@@ -105,11 +105,11 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.75:
+        if passed_time > 3.85:
             self.flag = None
             self.override_twist = False
             self.park_to_right = False
-        elif passed_time > 2.6: # 오른쪽으로 제자리 회전
+        elif passed_time > 2.7: # 오른쪽으로 제자리 회전
             self.override_twist = True
             self.right_good = False
             print("2222")
