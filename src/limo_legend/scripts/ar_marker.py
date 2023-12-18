@@ -42,6 +42,9 @@ class ID_control:
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
             # print(self.kim_distance)
 
+            bgr_image = self.cvbridge.compressed_imgmsg_to_cv2(marker.image, "bgr8")
+            hls_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HLS)
+
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
