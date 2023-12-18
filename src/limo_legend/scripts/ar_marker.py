@@ -65,7 +65,8 @@ class ID_control:
         #if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
         if self.kim_distance > 0.83 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
             return
-        elif self.gtan < -0.5 and _data == "right": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
+        elif self.kim_distance > 0.86 and _data == "right": # 마커와의 거리가 0.8보다 큰데 stop 신호가 왔을 경우
+            # self.gtan < -0.5
             return
         else:
             self.start_time = rospy.get_time()
