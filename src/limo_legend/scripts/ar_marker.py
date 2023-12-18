@@ -134,8 +134,8 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = -1.15
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = -1.2
 
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
