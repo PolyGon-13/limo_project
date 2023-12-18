@@ -61,8 +61,8 @@ class ID_control:
             elif marker.id == 1:
                 if self.gtan > -0.5 and self.park_to_right == False:
                     self.found_sign("right")
-                # if self.park_to_right == True:
-                    # self.found_sign("right2")
+                if self.crosswalk_detected == True and self.park_to_right == True:
+                    self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5 and self.park_to_left == False:
                     self.found_sign("left")
@@ -129,19 +129,18 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 6.3:
+        if passed_time > 4.2:
             self.flag = None
             self.override_twist = False
             self.park_to_right = False
             self.audio = False
-        elif passed_time > 4.7: # 오른쪽으로 제자리 회전
+        elif passed_time > 2.5: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
         else: # 회전할 위치까지 전진
             self.override_twist = True
-            self.drive_data.linear.x = 0.46
+            self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-            print("right2check")
             if not self.audio:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 self.audio = True
@@ -166,12 +165,12 @@ class ID_control:
             if not self.audio:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
                 self.audio = True
-    
+
     # 주차구간을 빠져나온 직후 좌회전 마커가 있는 경우 (gtan를 이용한 연산이 불가능)
     def left2_turn_sign(self):
         if self.flag != "left2":
             return
-            
+
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 3.7:
             self.flag = None
@@ -242,6 +241,7 @@ class ID_control:
         self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
         self.left_turn_sign() # 좌회전 신호를 4순위로 실행
+        self.right2_turn_sign() # 우회전2 신호를 5순위로 실행
         self.left2_turn_sign() # 좌회전2 신호를 6순위로 실행
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
