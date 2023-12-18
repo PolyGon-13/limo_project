@@ -144,11 +144,11 @@ class LimoController:
 
             # 마커 감지 유무에 따른 마커 동작
             if self.override_twist == True: # 마커를 인식한 경우
-                # if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
+                self.e_stop = None # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
                 drive_data = self.new_drive_data # 마커 동작을 수행
             elif self.lane_connected == False and self.accel_bool == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
                 if abs(drive_data.angular.z) < 0.3 and self.override_twist == False:
-                    drive_data.linear.x *= 1.4
+                    drive_data.linear.x *= 4
                     # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
                     #if self.stop_bool == True:
@@ -157,8 +157,7 @@ class LimoController:
                         #if self.fast == True:
                             #drive_data.linear.x *= 1.4
                         #elif self.fast == False:
-                            #drive_data.linear.x *= 4
-                        
+                            #drive_data.linear.x *= 4 
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
