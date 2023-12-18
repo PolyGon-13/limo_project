@@ -95,6 +95,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
+            print("1111")
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
 
@@ -114,6 +115,7 @@ class ID_control:
         else: # 회전할 위치까지 전진
             self.override_twist = True
             self.right_good = False
+            print("22222")
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0         
 
@@ -144,6 +146,7 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
+            print("33333")
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.15
 
