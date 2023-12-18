@@ -40,7 +40,7 @@ class ID_control:
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
-            # print(self.kim_distance)
+            print(self.kim_distance)
 
             if marker.id == 0:
                 self.found_sign("stop")
@@ -58,7 +58,7 @@ class ID_control:
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
             if self.kim_distance > 0.8 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
                 return
-            if self.gtan < -0.48 and _data == "right":
+            if self.gtan < -0.5 and _data == "right":
                 return
             else:
                 self.start_time = rospy.get_time()
