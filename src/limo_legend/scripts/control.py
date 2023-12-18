@@ -23,6 +23,7 @@ class LimoController:
         self.distance_left = 0 # 왼쪽 차선과의 거리
         self.distance_right = 0 # 오른쪽 차선과의 거리
         self.last_time = rospy.get_time() # imu 센서 데이터를 이용한 수학적 계산에서 dt를 구할 때 사용하기 위한 시간 정보
+        self.lane_connected_time = rospy.get_time()
         self.heaviside = False # imu 센서에서 기울어짐을 감지하였을 때 True로 전환
         self.angular_y = 0 # y축을 기준으로 기울어진 정도를 저장
         self.accel_bool = False # lane_detect.py로부터 받아옴. 두 차선을 감지(가속 구간) 신호를 받으면 True로 전환
