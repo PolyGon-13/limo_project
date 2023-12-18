@@ -91,6 +91,8 @@ class LimoController:
     # lane_detect.py로부터 받아온 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범했는 여부를 변수에 저장
     def lane_connect_callback(self, _data):
         self.lane_connected = _data.data
+        if _data.data and not self.lane_connected:
+            self.lane_connected_time = rospy.get_time()
 
     # lane_detect.py로부터 받아온 두 차선을 인식했는지 여부를 변수에 저장
     def lane_accel_callback(self, _data):
@@ -137,6 +139,7 @@ class LimoController:
             # 라인 겹침 처리
             if self.lane_connected == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범한 경우
                 drive_data.angular.z = self.distance_left * self.LATERAL_GAIN # 오른쪽 카메라의 계산값은 무시하고 왼쪽 차선 정보를 이용
+                elap_time = rospy.get_time() - self.lane_connected_time
 
 
             # 마커 감지 유무에 따른 마커 동작
@@ -150,11 +153,8 @@ class LimoController:
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
                     elif self.stop_bool == False:
-                        st_time = rospy.get_time()
                         if self.lane_connected == True:
-                            pass_time = rospy.get_time() - st_time
-                            print(pass_time)
-                        if pass_time > 3:
+                        if elap_time > 3:
                             drive_data.linear.x *= 1.4
                         else:
                             drive_data.linear.x *= 4
