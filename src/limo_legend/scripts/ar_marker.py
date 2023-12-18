@@ -6,7 +6,7 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Int32, Float64
 import time
-import pygame
+#import pygame
 
 class ID_control:
     def __init__(self):
@@ -17,19 +17,19 @@ class ID_control:
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
         self.audio = False
-        self.right_second = False
+        #self.right_second = False
         self.park_to_left = False
         self.park_to_right = False
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
         self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
-        pygame.mixer.init()
+        #pygame.mixer.init()
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
-        self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/start.mp3')
+        #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/start.mp3')
 
     # lane_detect.py로부터 받아온 두 차선의 기울어진 정도에 따른 값을 받아옴
     def global_gtan(self, _data):
