@@ -150,10 +150,10 @@ class LimoController:
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
                     elif self.stop_bool == False:                       
-                         pass_time = self.lane_connected_time - rospy.get_time()
-                         print(pass_time)
+                         pass_time = self.lane_connected_time - rospy.get_time()                        
                          if self.lane_connected == True:
                              self.lane_connected_time = rospy.get_time() + 2 if pass_time <= 0 else self.lane_connected_time
+                             print(pass_time)
                          if pass_time > 3:
                              drive_data.linear.x *= 1.4
                          else:
