@@ -109,8 +109,8 @@ class ID_control:
             self.override_twist = False
             self.park_to_right = False
         elif passed_time > 3.15: # 오른쪽으로 제자리 회전
-            self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.3
+            self.drive_data.linear.x = 0.3
+            self.drive_data.angular.z = -1.2
         else: # 회전할 위치까지 전진
             self.override_twist = True
             self.right_good = False
