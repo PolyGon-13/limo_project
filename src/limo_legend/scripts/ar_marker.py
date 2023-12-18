@@ -197,7 +197,7 @@ class ID_control:
             # rospy.loginfo("PARK Marker End")
         if passed_time > 4: # 오른쪽으로 180도 제자리 회전
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0
+            self.drive_data.angular.z = 0.0
         elif passed_time > 2.5: # gtan 값을 이용해 주차공간 내에서 정렬
             if abs(self.gtan) < 0.0005:
                 self.drive_data.linear.x = 0.0
