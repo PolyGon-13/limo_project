@@ -141,6 +141,7 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
+            print(right2check)
             if not self.audio:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
                 self.audio = True
@@ -170,7 +171,7 @@ class ID_control:
     def left2_turn_sign(self):
         if self.flag != "left2":
             return
-
+            
         passed_time = rospy.get_time() - self.start_time
         if passed_time > 3.7:
             self.flag = None
