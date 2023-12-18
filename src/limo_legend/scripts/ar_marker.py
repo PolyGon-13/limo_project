@@ -184,8 +184,8 @@ class ID_control:
                 self.drive_data.linear.x = 0.0
                 self.drive_data.angular.z = 0.5
         elif passed_time > 1:
-            self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = 1.3
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = 1.2
         elif passed_time > 0.5:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
