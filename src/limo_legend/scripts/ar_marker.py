@@ -143,10 +143,10 @@ class ID_control:
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
-        self.park_sign() # 주차 신호를 1순위로 실행
-        self.stop_sign() # 정지 신호를 2순위로 실행
         self.right_turn_sign() # 우회전 신호를 3순위로 실행
         self.right2_turn_sign() # 우회전2 신호를 5순위로 실행
+        self.park_sign() # 주차 신호를 1순위로 실행
+        self.stop_sign() # 정지 신호를 2순위로 실행       
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
         self.park_bool_pub.publish(self.park) # 주차 마커 인식 여부를 담은 변수를 퍼블리시
