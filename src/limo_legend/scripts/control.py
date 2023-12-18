@@ -138,6 +138,7 @@ class LimoController:
             if self.lane_connected == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범한 경우
                 drive_data.angular.z = self.distance_left * self.LATERAL_GAIN # 오른쪽 카메라의 계산값은 무시하고 왼쪽 차선 정보를 이용
 
+
             # 마커 감지 유무에 따른 마커 동작
             if self.override_twist == True: # 마커를 인식한 경우
                 # if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
@@ -148,10 +149,11 @@ class LimoController:
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
                     if self.stop_bool == True:
                         drive_data.linear.x *= 1.4
-                    elif not self.lane_connected and self.lane_connected_time > 0 and rospy.get_time() - self.lane_connected_time < 3.0:
-                        drive_data.linear.x *= 4
-                    else:
-                        drive_data.linear.x *= 1.4
+                    else self.stop_bool == False:
+                        if self.laned_connected == True:
+                            drive_data.linear.x *= 1.4
+                        else:
+                            drive_data.linear.x *= 4
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
