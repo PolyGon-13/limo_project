@@ -94,7 +94,6 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
-            print("zzzz")
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
 
@@ -104,13 +103,13 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 4.5:
+        if passed_time > 4:
             self.flag = None
             self.override_twist = False
             self.park_to_right = False
         elif passed_time > 3.15: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.0
+            self.drive_data.angular.z = -1.3
         else: # 회전할 위치까지 전진
             self.override_twist = True
             self.right_good = False
@@ -144,7 +143,7 @@ class ID_control:
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
             self.drive_data.linear.x = 0.3
-            self.drive_data.angular.z = -1.2
+            self.drive_data.angular.z = -1.15
 
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
