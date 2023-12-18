@@ -125,8 +125,8 @@ class ID_control:
             self.override_twist = False
             #self.audio = False
         elif passed_time > 1.6: # 오른쪽으로 제자리 회전
-            self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.6
+            self.drive_data.linear.x = 0.2
+            self.drive_data.angular.z = -2.0
             print("rightright")
             #if not self.audio:
                 #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
