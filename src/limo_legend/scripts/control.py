@@ -40,6 +40,7 @@ class LimoController:
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
         rospy.Subscriber("/limo/marker/park", Bool, self.marker_park_bool_callback)
+        rospy.Subscriber("/limo/marker/stop", Bool, self.marker_stop_bool_callback)
         rospy.Subscriber("/limo/lidar_warn", String, self.lidar_warning_callback)
         rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
@@ -111,7 +112,10 @@ class LimoController:
         
     # ar_marker.py로부터 받아온 주차 마커 인식 여부를 변수에 저장
     def marker_park_bool_callback(self, _data):
-        self.park_bool = _data.data    
+        self.park_bool = _data.data
+
+    def marker_stop_bool_callback(self, _data):
+        self.stop_bool = _data.data
     
     # imu 센서로부터 받아온 값들을 이용해 로봇의 기운 정도 계산 (합성곱 이용)
     def imu_callback(self, msg):
@@ -140,7 +144,10 @@ class LimoController:
                 if abs(drive_data.angular.z) < 0.3 and self.override_twist == False:
                     # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
-                    drive_data.linear.x *= 5 # 기존 속도의 1.3배로 달림
+                    if self.stop_bool == True:
+                        drive_data.linear.x *= 1.4
+                    elif self.stop_bool == False:
+                        drive_data.linear.x *= 5 # 최대 속도로 달림
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
