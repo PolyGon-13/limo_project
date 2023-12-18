@@ -17,6 +17,7 @@ class ID_control:
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
         self.audio = False
+        self.right_second = False
         self.park_to_left = False
         self.park_to_right = False
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
@@ -49,7 +50,7 @@ class ID_control:
             elif marker.id == 1:
                 if self.gtan > -0.5 and self.right_second == False:
                     self.found_sign("right")
-                elif self.right_second == True:
+                if self.right_second == True:
                     self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5 and self.park_to_left == False:
