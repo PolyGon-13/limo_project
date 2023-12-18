@@ -6,7 +6,7 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Int32, Float64
 import time
-#import pygame
+import simplesudio as sa
 
 class ID_control:
     def __init__(self):
@@ -24,7 +24,6 @@ class ID_control:
         self.crosswalk_distance = 0 # crosswalk_detect.py로부터 받아오는 횡단보도와의 거리       
         self.rate = rospy.Rate(5) # 1초에 5번 loop를 반복할 수 있도록 rate라는 객체를 생성
         self.gtan = 0 # 두 차선의 기울기를 이용해 차선이 어느 한 쪽으로 치우친 정도를 저장
-        #pygame.mixer.init()
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
@@ -99,9 +98,9 @@ class ID_control:
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
-                #self.audio = True
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
+                self.audio = True
 
     # 1번 마커(우회전 신호)를 인식하였다면 아래의 동작 수행
     def right_turn_sign(self):
@@ -119,9 +118,9 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
-                #self.audio = True
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+                self.audio = True
 
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
     def right2_turn_sign(self):
@@ -141,9 +140,9 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
-                #self.audio = True
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+                self.audio = True
             
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
     def left_turn_sign(self):
@@ -162,9 +161,9 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
-                #self.audio = True
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+                self.audio = True
 
     # 주차구간을 빠져나온 직후 좌회전 마커가 있는 경우 (gtan를 이용한 연산이 불가능)
     def left2_turn_sign(self):
@@ -191,9 +190,9 @@ class ID_control:
             self.override_twist = True
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
-                #self.audio = True
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+                self.audio = True
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
@@ -227,13 +226,14 @@ class ID_control:
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.15
-            #if not self.audio:
-                #self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
-                #self.audio = True
+            if not self.audio:
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
+                self.audio = True
 
-    #def play_mp3(self, file_path):
-        #pygame.mixer.music.load(file_path)
-        #pygame.mixer.music.play(0)
+    def play_sound(self, file_path):
+        wave_obj = sa.WaveObject.from_wave_file(file_path)
+        play_obj = wave_obj.play()
+        play_obj.wait_done()
     
     # 마커들의 동작을 우선순위를 두어 함수 실행 & 주행 데이터와 마커 인식 유무 데이터 퍼블리시
     def main(self): # 마커 신호에 우선순위를 두었지만 사실 의미가 없다...
