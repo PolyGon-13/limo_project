@@ -45,9 +45,9 @@ class ID_control:
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
-                if self.kim_distance < 0.86 and self.right_good == False:
+                if self.gtan > -0.5 and self.right_good == False:
                     self.found_sign("right")
-                if self.right_good == True and self.kim_distance < 0.86:
+                if self.right_good == True:
                     self.found_sign("right2")
             elif marker.id == 3:
                 self.found_sign("park")
@@ -76,6 +76,7 @@ class ID_control:
         else:
             # print("stop_start")
             self.stop = True
+            print("stop")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
@@ -86,17 +87,17 @@ class ID_control:
             return
         
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 2.85:
+        if passed_time > 3.7:
             self.flag = None
             self.override_twist = False
             # rospy.loginfo("RIGHT Marker End")
-        elif passed_time > 1.8:
+        elif passed_time > 2.2:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
             print("1111")
             self.drive_data.linear.x = 0.0
-            self.drive_data.angular.z = -1.6
+            self.drive_data.angular.z = -1.0
 
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
     def right2_turn_sign(self):
