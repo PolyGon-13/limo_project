@@ -230,7 +230,7 @@ class ID_control:
                 self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
                 self.audio = True
 
-    def play_sound(self, file_path):
+    def play_mp3(self, file_path):
         wave_obj = sa.WaveObject.from_wave_file(file_path)
         play_obj = wave_obj.play()
         play_obj.wait_done()
