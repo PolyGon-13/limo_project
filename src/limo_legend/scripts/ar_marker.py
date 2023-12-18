@@ -113,7 +113,7 @@ class ID_control:
         elif passed_time > 2: # 오른쪽으로 제자리 회전
             self.override_twist = True
             print("2222")
-            self.drive_data.linear.x = 0.35
+            self.drive_data.linear.x = 0.4
             self.drive_data.angular.z = -1.4
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
