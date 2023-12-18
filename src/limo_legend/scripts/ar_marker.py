@@ -46,7 +46,6 @@ class ID_control:
                 self.found_sign("stop")
             elif marker.id == 1:
                 if self.gtan > -0.5 and self.right_good == False:
-                    print("tttt")
                     self.found_sign("right")
                 if self.right_good == True:
                     self.found_sign("right2")
@@ -95,6 +94,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
+            print("zzzz")
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
 
