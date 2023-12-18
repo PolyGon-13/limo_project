@@ -48,7 +48,7 @@ class ID_control:
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
-                if self.gtan > -0.5 and self.right_second == False:
+                if self.gtan > -0.5:
                     self.found_sign("right")
                 #if self.right_second == True:
                     #self.found_sign("right2")
