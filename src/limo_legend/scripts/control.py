@@ -145,7 +145,7 @@ class LimoController:
                 if abs(drive_data.angular.z) < 0.3 and self.park_bool == False:
                     # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
                     # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
-                    drive_data.linear.x *= 1.3 # 기존 속도의 1.3배로 달림
+                    drive_data.linear.x *= 4 # 기존 속도의 1.3배로 달림
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
