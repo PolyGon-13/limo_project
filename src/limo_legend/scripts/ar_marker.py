@@ -105,7 +105,7 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time
-        if passed_time > 3.96:
+        if passed_time > 3.8:
             self.flag = None
             self.override_twist = False
             self.park_to_right = False
@@ -114,7 +114,7 @@ class ID_control:
             self.right_good = False
             print("2222")
             self.drive_data.linear.x = 0.15
-            self.drive_data.angular.z = -1.21
+            self.drive_data.angular.z = -1.3
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
     def park_sign(self):
