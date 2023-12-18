@@ -61,7 +61,7 @@ class ID_control:
             elif marker.id == 1:
                 if self.gtan > -0.5 and self.park_to_right == False:
                     self.found_sign("right")
-                if self.crosswalk_detected == True and self.park_to_right == True:
+                if self.park_to_right == True:
                     self.found_sign("right2")
             elif marker.id == 2:
                 if self.gtan < 0.5 and self.park_to_left == False:
