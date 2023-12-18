@@ -99,7 +99,7 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
             if not self.audio:
-                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.mp3')
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/stop.wav')
                 self.audio = True
 
     # 1번 마커(우회전 신호)를 인식하였다면 아래의 동작 수행
@@ -119,7 +119,7 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.0
             if not self.audio:
-                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.wav')
                 self.audio = True
 
     # 주차구간 이후 횡단보도 쪽 우회전 마커를 인식할 경우 (gtan를 이용한 연산이 불가능)
@@ -141,7 +141,7 @@ class ID_control:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = 0.0
             if not self.audio:
-                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.mp3')
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/right.wav')
                 self.audio = True
             
     # 2번 마커(좌회전 신호)를 인식하였다면 아래의 동작 수행
@@ -162,7 +162,7 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 1.0
             if not self.audio:
-                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.wav')
                 self.audio = True
 
     # 주차구간을 빠져나온 직후 좌회전 마커가 있는 경우 (gtan를 이용한 연산이 불가능)
@@ -191,7 +191,7 @@ class ID_control:
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
             if not self.audio:
-                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.mp3')
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/left.wav')
                 self.audio = True
 
     # 3번 마커(주차 신호)를 인식하였다면 아래의 동작 수행
@@ -227,7 +227,7 @@ class ID_control:
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.15
             if not self.audio:
-                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.mp3')
+                self.play_mp3('/home/agilex/limo_project/src/limo_legend/test/park.wav')
                 self.audio = True
 
     def play_mp3(self, file_path):
