@@ -144,7 +144,7 @@ class LimoController:
 
             # 마커 감지 유무에 따른 마커 동작
             if self.override_twist == True: # 마커를 인식한 경우
-                self.e_stop != "Safe": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
+                self.e_stop = "Safe": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
                 drive_data = self.new_drive_data # 마커 동작을 수행
             elif self.lane_connected == False and self.accel_bool == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
                 if abs(drive_data.angular.z) < 0.3 and self.override_twist == False:
