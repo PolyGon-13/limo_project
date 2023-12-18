@@ -129,7 +129,7 @@ class ID_control:
             self.flag = None
             self.override_twist = False
             #self.audio = False
-        elif passed_time > 2: # 오른쪽으로 제자리 회전
+        elif passed_time > 1.6: # 오른쪽으로 제자리 회전
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.6
             #if not self.audio:
