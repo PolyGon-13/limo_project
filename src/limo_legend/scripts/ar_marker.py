@@ -46,6 +46,7 @@ class ID_control:
             kim_z = marker.pose.pose.position.z
             self.kim_distance = (kim_x**2+kim_y**2+kim_z**2)**0.5 # 마커와의 거리 계산
             # print(self.kim_distance)
+            print(marker.id)
 
             if marker.id == 0:
                 self.found_sign("stop")
