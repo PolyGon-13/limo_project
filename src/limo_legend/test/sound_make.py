@@ -1,7 +1,7 @@
 from gtts import gTTS
 import os
 
-text = "sound"
+text = "stop"
 tts = gTTS(text=text, lang='en')
-tts.save("fff.mp3")
+tts.save("stop.wav")
 print("end")
