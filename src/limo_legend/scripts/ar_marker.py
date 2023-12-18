@@ -105,7 +105,7 @@ class ID_control:
             #self.audio = False
             # rospy.loginfo("RIGHT Marker End")
         elif passed_time > 2.5:
-            # print("right_start")
+            print("right_start")
             self.override_twist = True
             self.right_second = True
             self.drive_data.linear.x = 0.0
