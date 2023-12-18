@@ -47,7 +47,7 @@ class ID_control:
             elif marker.id == 1:
                 if self.gtan > -0.5 and self.right_good == False:
                     self.found_sign("right")
-                if self.kim_distance < 0.6935 and self.right_good == True:
+                if self.right_good == True:
                     self.found_sign("right2")
             elif marker.id == 3:
                 self.found_sign("park")
