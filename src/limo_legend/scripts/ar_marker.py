@@ -16,7 +16,7 @@ class ID_control:
         self.flag = None # id값에 해당하는 문자열을 저장
         self.park = False # 주차 마커를 인식했는지 여부를 담는 변수
         self.right_good = False
-        # self.stop = False
+        self.stop = False
         self.collect = None
         self.crosswalk_detected = False 
         self.start_time = rospy.get_time() # 마커 동작을 수행할 때 딜레이를 주기 위해 마커를 인식한 시점에서의 시간을 저장
@@ -25,7 +25,7 @@ class ID_control:
         self.pub = rospy.Publisher("/limo/marker/cmd_vel", Twist, queue_size=5)
         self.pub1 = rospy.Publisher("/limo/marker/bool", Bool, queue_size=5)
         self.park_bool_pub = rospy.Publisher("/limo/marker/park", Bool, queue_size=5)
-        # self.stop_bool_pub = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
+        self.stop_bool_pub = rospy.Publisher("/limo/marker/stop", Bool, queue_size=5)
         rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.marker_CB)
         rospy.Subscriber("/limo/lane/gtan", Float64, self.global_gtan)
         rospy.Subscriber("/limo/crosswalk/distance", Int32, self.crosswalk_distance_callback)
@@ -49,7 +49,6 @@ class ID_control:
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
         for marker in data.markers:
-            # print(marker.id)
             kim_x = marker.pose.pose.position.x
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
@@ -59,7 +58,7 @@ class ID_control:
             if marker.id == 0:
                 self.found_sign("stop")
             elif marker.id == 1:
-                if self.gtan > -0.5 and self.right_good == False:
+                if self.right_good == False:
                     self.found_sign("right")
                 if self.right_good == True and self.crosswalk_detected == True:
                     self.found_sign("right2")
@@ -71,6 +70,8 @@ class ID_control:
         self.collect = _data
         if self.flag == None: # 전달받은 마커 데이터가 없거나, 마커 동작 수행을 끝마쳐 self.flag에 아무 데이터가 없는 경우
             if self.kim_distance > 0.8 and _data == "park": # 마커와의 거리가 0.8보다 큰데 park 신호가 왔을 경우
+                return
+            elif self.gtan < -0.5 and _data == "right":
                 return
             else:
                 self.start_time = rospy.get_time()
@@ -85,11 +86,12 @@ class ID_control:
         if passed_time > 12:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             # rospy.loginfo("STOP Marker End")
-        elif passed_time > 10:
+        elif passed_time > 5.5:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
-        elif passed_time > 4.5:
+        else:
             # print("stop_start")
-            # self.stop = True
+            self.stop = True
+            print("stop")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
@@ -108,7 +110,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
-            # print("1111")
+            print("1111")
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.15
 
@@ -125,7 +127,7 @@ class ID_control:
             self.park_to_right = False
         elif passed_time > 1.4: # 오른쪽으로 제자리 회전
             self.override_twist = True
-            # print("2222")
+            print("2222")
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
 
@@ -148,7 +150,7 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
-            # print("주차주차")
+            print("주차주차")
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = -1.07
 
@@ -162,7 +164,7 @@ class ID_control:
         self.pub.publish(self.drive_data) # 주행 데이터를 퍼블리시
         self.pub1.publish(self.override_twist) # 마커 인식 여부를 담은 변수를 퍼블리시
         self.park_bool_pub.publish(self.park) # 주차 마커 인식 여부를 담은 변수를 퍼블리시
-        # self.stop_bool_pub.publish(self.stop)
+        self.stop_bool_pub.publish(self.stop)
         self.rate.sleep() # 무한루프에서 설정한 주기를 맞추기 위해 기다리는 함수
 
 if __name__ == "__main__":
