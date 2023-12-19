@@ -87,9 +87,8 @@ class ID_control:
         elif passed_time > 10.8:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         elif passed_time > 5.3:
-            # print("stop_start")
+            print("stop_start")
             # self.stop = True
-            # print("stop")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
