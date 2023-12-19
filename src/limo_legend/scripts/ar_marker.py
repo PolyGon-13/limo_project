@@ -81,15 +81,15 @@ class ID_control:
             return
 
         passed_time = rospy.get_time() - self.start_time # 마커 동작을 수행한 시점으로부터 지난 시간
-        if passed_time > 12:
+        if passed_time > 13:
             self.flag = None # 다음 마커 동작 수행을 위해 self.flag 초기화
             # rospy.loginfo("STOP Marker End")
-        elif passed_time > 5.5:
+        elif passed_time > 10.8:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
-        else:
+        elif passed_time > 5.3:
             # print("stop_start")
             # self.stop = True
-            print("stop")
+            # print("stop")
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = 0.0
