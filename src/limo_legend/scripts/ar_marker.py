@@ -49,7 +49,7 @@ class ID_control:
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
         for marker in data.markers:
-            print(marker.id)
+            # print(marker.id)
             kim_x = marker.pose.pose.position.x
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
@@ -88,7 +88,7 @@ class ID_control:
         elif passed_time > 10:
             self.override_twist = False # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 False로 전환
         elif passed_time > 4.5:
-            print("stop_start")
+            # print("stop_start")
             # self.stop = True
             self.override_twist = True # control.py에 마커 동작 수행이 끝났음을 알려줄 변수를 True로 전환
             self.drive_data.linear.x = 0.0
@@ -108,7 +108,7 @@ class ID_control:
             # print("right_start")
             self.override_twist = True
             self.right_good = True
-            print("1111")
+            # print("1111")
             self.drive_data.linear.x = 0.0
             self.drive_data.angular.z = -1.15
 
@@ -125,7 +125,7 @@ class ID_control:
             self.park_to_right = False
         elif passed_time > 1.4: # 오른쪽으로 제자리 회전
             self.override_twist = True
-            print("2222")
+            # print("2222")
             self.drive_data.linear.x = 0.3
             self.drive_data.angular.z = -1.0
 
@@ -148,7 +148,7 @@ class ID_control:
         else: # 적절한 위치에서 우회전하여 주차공간에 진입
             self.override_twist = True
             self.park = True # 주차 마커를 인식했음을 알림 (가속 차단 용도)
-            print("주차주차")
+            # print("주차주차")
             self.drive_data.linear.x = 0.2
             self.drive_data.angular.z = -1.07
 
