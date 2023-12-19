@@ -49,6 +49,7 @@ class ID_control:
     # 인식한 마커와의 거리를 계산하고, 인식한 마커의 id값에 따른 문자열을 found_sign 함수에 전달
     def marker_CB(self, data):
         for marker in data.markers:
+            print(marker.id)
             kim_x = marker.pose.pose.position.x
             kim_y = marker.pose.pose.position.y
             kim_z = marker.pose.pose.position.z
