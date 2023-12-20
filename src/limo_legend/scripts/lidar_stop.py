@@ -41,7 +41,7 @@ class LidarObjectDetector:
                 self.Safe_first_time = rospy.Time.now()
             self.Warning_first_time = rospy.Time.now()
             self.warn_pub.publish("Safe")
-            self.timer = rospy.get_time() + 8 # 현재 ROS 시간보다 5초 더 많은 시간을 timer에 저장 (5초 동안 장애물을 인식한 경우 특정 동작을 수행하기 위함)
+            self.timer = rospy.get_time() + 5 # 현재 ROS 시간보다 5초 더 많은 시간을 timer에 저장 (5초 동안 장애물을 인식한 경우 특정 동작을 수행하기 위함)
             self.timer_pub.publish(float(self.timer))
             rospy.logdebug("Safe!!")
 
