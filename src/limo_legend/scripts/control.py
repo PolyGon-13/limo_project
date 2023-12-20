@@ -20,10 +20,8 @@ class LimoController:
         self.REF_X2 = 240 # 오른쪽 차선의 Pixel 값
         self.left_receiveimage = False # 이미지 데이터를 받아오기 시작하면 True로 전환
         self.distance_left = 0 # 왼쪽 차선과의 거리
-        self.stop_bool = False
         self.distance_right = 0 # 오른쪽 차선과의 거리
         self.last_time = rospy.get_time() # imu 센서 데이터를 이용한 수학적 계산에서 dt를 구할 때 사용하기 위한 시간 정보
-        self.boost_time = rospy.get_time()
         self.heaviside = False # imu 센서에서 기울어짐을 감지하였을 때 True로 전환
         self.angular_y = 0 # y축을 기준으로 기울어진 정도를 저장
         self.accel_bool = False # lane_detect.py로부터 받아옴. 두 차선을 감지(가속 구간) 신호를 받으면 True로 전환
@@ -42,7 +40,6 @@ class LimoController:
         rospy.Subscriber("/limo/marker/cmd_vel", Twist, self.marker_cmd_vel_callback)
         rospy.Subscriber("/limo/marker/bool", Bool, self.marker_bool_callback)
         rospy.Subscriber("/limo/marker/park", Bool, self.marker_park_bool_callback)
-        rospy.Subscriber("/limo/marker/stop", Bool, self.marker_stop_bool_callback)
         rospy.Subscriber("/limo/lidar_warn", String, self.lidar_warning_callback)
         rospy.Subscriber("/limo/lidar/timer", Float64, self.lidar_timer_callback)
         self.drive_pub = rospy.Publisher(rospy.get_param("~control_topic_name", "/cmd_vel"), Twist, queue_size=1)
@@ -115,9 +112,6 @@ class LimoController:
     # ar_marker.py로부터 받아온 주차 마커 인식 여부를 변수에 저장
     def marker_park_bool_callback(self, _data):
         self.park_bool = _data.data    
-
-    def marker_stop_bool_callback(self, _data):
-        self.stop_bool = _data.data
     
     # imu 센서로부터 받아온 값들을 이용해 로봇의 기운 정도 계산 (합성곱 이용)
     def imu_callback(self, msg):
@@ -142,6 +136,11 @@ class LimoController:
             if self.override_twist == True: # 마커를 인식한 경우
                 # if self.e_stop != "Warning": # 라이다가 장애물을 감지하지 않았을 경우 (표지판을 장애물로 인식하는 경우가 있어서 주석처리함)
                 drive_data = self.new_drive_data # 마커 동작을 수행
+            elif self.lane_connected == False and self.accel_bool == True: # 왼쪽 차선이 2번째 카메라(오른쪽 차선)에 침범하지 않았으며 두 차선을 인식한 경우
+                if abs(drive_data.angular.z) < 0.3 and self.park_bool == False:
+                    # 계산된 각속도가 0.3보다 작을 때(가속을 하면 안되는 구간에서도 두 차선을 인식하는 경우가 발생하기 때문에 사용)
+                    # 또한 주차 마커를 인식하지 않은 경우(교차로 구간에서 가속을 하는 구간이 발생하는데 주차 모션 제어가 방해가 됨)
+                    drive_data.linear.x *= 1.3 # 기존 속도의 1.3배로 달림
 
             # IMU 센서 동작
             if abs(self.angular_y) > 0.05:
@@ -153,7 +152,7 @@ class LimoController:
             if self.lidar_timer < rospy.get_time(): # 라이다가 장애물을 감지한 시점에서 흐른 시간(ros현재 시간 + 5)보다 현재 ros시간이 큰 경우 = 5초가 지난 경우
                 # print("lidar_stop")
                 drive_data.linear.x = 0.0
-                drive_data.angular.z = -4.0 # 제자리 회전할 각속도
+                drive_data.angular.z = -3.0 # 제자리 회전할 각속도
             elif self.e_stop == "Warning": # 라이다가 장애물을 감지한 경우
                 drive_data.linear.x = 0.0
                 drive_data.angular.z = 0.0
